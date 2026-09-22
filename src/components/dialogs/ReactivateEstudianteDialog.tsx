@@ -4,16 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { patientService } from "@/services/patientService";
+import { estudianteService } from "@/services/estudianteService";
 import { toast } from "sonner";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  patientId: number | null;
+  estudianteId: number | null;
 }
 
-export function ReactivatePatientDialog({ open, onOpenChange, patientId }: Props) {
+export function ReactivateEstudianteDialog({ open, onOpenChange, estudianteId }: Props) {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ name: "", lastName: "", email: "", phoneNumber: "" });
 
@@ -24,11 +24,11 @@ export function ReactivatePatientDialog({ open, onOpenChange, patientId }: Props
       if (form.lastName) data.lastName = form.lastName;
       if (form.email) data.email = form.email;
       if (form.phoneNumber) data.phoneNumber = form.phoneNumber;
-      return patientService.reactivate(patientId!, Object.keys(data).length ? data : undefined);
+      return estudianteService.reactivate(estudianteId!, Object.keys(data).length ? data : undefined);
     },
     onSuccess: () => {
-      toast.success("Paciente reactivado");
-      queryClient.invalidateQueries({ queryKey: ["patients"] });
+      toast.success("Estudiante reactivado");
+      queryClient.invalidateQueries({ queryKey: ["estudiantes"] });
       onOpenChange(false);
       setForm({ name: "", lastName: "", email: "", phoneNumber: "" });
     },
@@ -38,9 +38,9 @@ export function ReactivatePatientDialog({ open, onOpenChange, patientId }: Props
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Reactivar Paciente</DialogTitle>
+          <DialogTitle>Reactivar Estudiante</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">Opcionalmente actualice los datos del paciente.</p>
+        <p className="text-sm text-muted-foreground">Opcionalmente actualice los datos del estudiante.</p>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">

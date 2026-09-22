@@ -99,15 +99,15 @@ export default function RegisterPage() {
             fontSize: "1.75rem", fontWeight: "400",
             color: "white", margin: "0 0 0.75rem", letterSpacing: "-0.02em",
           }}>
-            LifeTracker<br />
-            <span style={{ color: "hsl(199, 89%, 65%)", fontStyle: "italic" }}>Wellness</span>
+            COMPA<br />
+            <span style={{ color: "hsl(199, 89%, 65%)", fontStyle: "italic" }}>Acompañamiento estudiantil</span>
           </h1>
 
           <p style={{
             fontSize: "0.9rem", color: "hsl(199, 30%, 70%)",
             lineHeight: 1.7, fontFamily: "system-ui, sans-serif",
           }}>
-            Crea tu cuenta como profesional de la salud y comienza a gestionar a tus pacientes hoy.
+            Crea tu cuenta como orientador de la salud y comienza a gestionar a tus estudiantes hoy.
           </p>
 
           <div style={{
@@ -121,7 +121,7 @@ export default function RegisterPage() {
               fontFamily: "system-ui, sans-serif", margin: 0,
               lineHeight: 1.7, fontStyle: "italic",
             }}>
-              "La tecnología al servicio del bienestar mental de tus pacientes."
+              "La tecnología al servicio del bienestar mental de tus estudiantes."
             </p>
           </div>
         </div>
@@ -147,7 +147,7 @@ export default function RegisterPage() {
               fontSize: "0.875rem", color: "hsl(215, 15%, 47%)",
               fontFamily: "system-ui, sans-serif", margin: 0,
             }}>
-              Completa el formulario para registrarte como profesional
+              Completa el formulario para registrarte como orientador
             </p>
           </div>
 
@@ -168,7 +168,7 @@ export default function RegisterPage() {
 
             <div>
               <label style={labelStyle}>Correo electrónico</label>
-              <input type="email" {...register("email")} placeholder="profesional@clinica.com" style={inputStyle(!!errors.email)} />
+              <input type="email" {...register("email")} placeholder="orientador@clinica.com" style={inputStyle(!!errors.email)} />
               {errors.email && <p style={errorStyle}>{errors.email.message}</p>}
             </div>
 

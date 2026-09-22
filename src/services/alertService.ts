@@ -5,8 +5,8 @@ export type AlertStatus = "PENDIENTE" | "RESUELTA" | "IGNORADA";
 
 export interface Alert {
   id: number;
-  patientId: number;
-  patientName: string;
+  estudianteId: number;
+  estudianteName: string;
   type: AlertType;
   status: AlertStatus;
   description: string;

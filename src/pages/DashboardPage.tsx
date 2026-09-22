@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RiskBadge } from "@/components/RiskBadge";
 import { StatusBadge } from "@/components/StatusBadge";
 import { riskLevelService } from "@/services/riskLevelService";
-import { patientService } from "@/services/patientService";
+import { estudianteService } from "@/services/estudianteService";
 import { authService } from "@/services/authService";
 import type { RiskLevel, RiskLevelInfo } from "@/types";
 import { cn } from "@/lib/utils";
@@ -63,14 +63,14 @@ export default function DashboardPage() {
     queryFn: () => riskLevelService.listAll(),
   });
 
-  const { data: patients = [], isLoading: loadingPatients } = useQuery({
-    queryKey: ["patients", "list", "", ""],
-    queryFn: () => patientService.listActive(),
+  const { data: estudiantes = [], isLoading: loadingEstudiantes } = useQuery({
+    queryKey: ["estudiantes", "list", "", ""],
+    queryFn: () => estudianteService.listActive(),
   });
 
-  const { data: inactivePatients = [], isLoading: loadingInactive } = useQuery({
-    queryKey: ["patients", "inactive"],
-    queryFn: () => patientService.listInactive(),
+  const { data: inactiveEstudiantes = [], isLoading: loadingInactive } = useQuery({
+    queryKey: ["estudiantes", "inactive"],
+    queryFn: () => estudianteService.listInactive(),
   });
 
   const grouped = useMemo(() => {
@@ -84,7 +84,7 @@ export default function DashboardPage() {
   const rojos = grouped["ROJO"];
   const amarillos = grouped["AMARILLO"];
   const verdes = grouped["VERDE"];
-  const isLoading = loadingRisk || loadingPatients;
+  const isLoading = loadingRisk || loadingEstudiantes;
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Buenos días" : hour < 18 ? "Buenas tardes" : "Buenas noches";
@@ -98,19 +98,19 @@ export default function DashboardPage() {
           {greeting}, {user?.name} 👋
         </h1>
         <p className="text-sm text-muted-foreground">
-          Aquí está el resumen de tus pacientes hoy — {format(new Date(), "dd/MM/yyyy")}
+          Aquí está el resumen de tus estudiantes hoy — {format(new Date(), "dd/MM/yyyy")}
         </p>
       </div>
 
       {/* Tarjetas estadísticas */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <StatCard
-          label="Total pacientes"
-          value={patients.length}
+          label="Total estudiantes"
+          value={estudiantes.length}
           icon={<Users className="h-5 w-5 text-muted-foreground" />}
           colorClass="text-foreground"
           isLoading={isLoading}
-          onClick={() => navigate("/patients")}
+          onClick={() => navigate("/estudiantes")}
         />
         <StatCard
           label="Riesgo alto"
@@ -138,13 +138,13 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Alerta pacientes en rojo */}
+      {/* Alerta estudiantes en rojo */}
       {!isLoading && rojos.length > 0 && (
         <div className="flex items-center justify-between gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
           <div className="flex items-center gap-3 text-sm text-red-700">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             <span>
-              <strong>{rojos.length} {rojos.length === 1 ? "paciente requiere" : "pacientes requieren"} atención inmediata</strong>
+              <strong>{rojos.length} {rojos.length === 1 ? "estudiante requiere" : "estudiantes requieren"} atención inmediata</strong>
               {" "}— adherencia por debajo del 50%.
             </span>
           </div>
@@ -161,12 +161,12 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 
-        {/* Pacientes en riesgo alto */}
+        {/* Estudiantes en riesgo alto */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <ShieldAlert className="h-4 w-4 text-red-500" />
-              Pacientes en riesgo alto
+              Estudiantes en riesgo alto
             </CardTitle>
             <Button variant="ghost" size="sm" onClick={() => navigate("/risk-level")} className="gap-1 text-xs">
               Ver todos <ArrowRight className="h-3 w-3" />
@@ -183,20 +183,20 @@ export default function DashboardPage() {
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <CheckCircle className="mb-2 h-8 w-8 text-green-400" />
                 <p className="text-sm font-medium text-muted-foreground">
-                  Ningún paciente en riesgo alto
+                  Ningún estudiante en riesgo alto
                 </p>
               </div>
             ) : (
               <div className="space-y-2">
                 {rojos.slice(0, 5).map((p) => (
                   <button
-                    key={p.patientId}
-                    onClick={() => navigate(`/patients/${p.patientId}`)}
+                    key={p.estudianteId}
+                    onClick={() => navigate(`/estudiantes/${p.estudianteId}`)}
                     className="w-full rounded-lg border bg-card p-3 text-left transition-colors hover:bg-accent"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-medium">{p.patientName}</p>
+                        <p className="truncate text-sm font-medium">{p.estudianteName}</p>
                         <p className="text-xs text-muted-foreground">
                           Última eval: {formatDate(p.evaluatedDate)}
                         </p>
@@ -220,42 +220,42 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Lista rápida de pacientes activos */}
+        {/* Lista rápida de estudiantes activos */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <TrendingUp className="h-4 w-4 text-primary" />
-              Pacientes recientes
+              Estudiantes recientes
             </CardTitle>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/patients")} className="gap-1 text-xs">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/estudiantes")} className="gap-1 text-xs">
               Ver todos <ArrowRight className="h-3 w-3" />
             </Button>
           </CardHeader>
           <CardContent>
-            {loadingPatients ? (
+            {loadingEstudiantes ? (
               <div className="space-y-2">
                 <Skeleton className="h-12 w-full" />
                 <Skeleton className="h-12 w-full" />
                 <Skeleton className="h-12 w-full" />
               </div>
-            ) : patients.length === 0 ? (
+            ) : estudiantes.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <Users className="mb-2 h-8 w-8 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">No hay pacientes activos</p>
+                <p className="text-sm text-muted-foreground">No hay estudiantes activos</p>
                 <Button
                   size="sm"
                   className="mt-3"
-                  onClick={() => navigate("/patients")}
+                  onClick={() => navigate("/estudiantes")}
                 >
-                  Agregar paciente
+                  Agregar estudiante
                 </Button>
               </div>
             ) : (
               <div className="space-y-2">
-                {patients.slice(0, 5).map((p) => (
+                {estudiantes.slice(0, 5).map((p) => (
                   <button
                     key={p.id}
-                    onClick={() => navigate(`/patients/${p.id}`)}
+                    onClick={() => navigate(`/estudiantes/${p.id}`)}
                     className="w-full rounded-lg border bg-card p-3 text-left transition-colors hover:bg-accent"
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -267,9 +267,9 @@ export default function DashboardPage() {
                     </div>
                   </button>
                 ))}
-                {patients.length > 5 && (
+                {estudiantes.length > 5 && (
                   <p className="pt-1 text-center text-xs text-muted-foreground">
-                    +{patients.length - 5} más en la lista de pacientes
+                    +{estudiantes.length - 5} más en la lista de estudiantes
                   </p>
                 )}
               </div>
@@ -279,27 +279,27 @@ export default function DashboardPage() {
 
       </div>
 
-      {/* Pacientes inactivos */}
-      {!loadingInactive && inactivePatients.length > 0 && (
+      {/* Estudiantes inactivos */}
+      {!loadingInactive && inactiveEstudiantes.length > 0 && (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <UserX className="h-4 w-4 text-muted-foreground" />
-              Pacientes inactivos
+              Estudiantes inactivos
               <span className="ml-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
-                {inactivePatients.length}
+                {inactiveEstudiantes.length}
               </span>
             </CardTitle>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/patients/inactive")} className="gap-1 text-xs">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/estudiantes/inactive")} className="gap-1 text-xs">
               Ver todos <ArrowRight className="h-3 w-3" />
             </Button>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {inactivePatients.slice(0, 3).map((p) => (
+              {inactiveEstudiantes.slice(0, 3).map((p) => (
                 <button
                   key={p.id}
-                  onClick={() => navigate(`/patients/${p.id}`)}
+                  onClick={() => navigate(`/estudiantes/${p.id}`)}
                   className="w-full rounded-lg border bg-card p-3 text-left transition-colors hover:bg-accent"
                 >
                   <div className="flex items-center justify-between gap-2">

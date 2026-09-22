@@ -19,21 +19,21 @@ const healthStatuses: { value: HealthStatus; label: string }[] = [
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  patientId: number;
+  estudianteId: number;
 }
 
-export function UpdateHealthStatusDialog({ open, onOpenChange, patientId }: Props) {
+export function UpdateHealthStatusDialog({ open, onOpenChange, estudianteId }: Props) {
   const queryClient = useQueryClient();
   const [healthStatus, setHealthStatus] = useState<HealthStatus | "">("");
   const [reason, setReason] = useState("");
 
   const mutation = useMutation({
-    mutationFn: () => clinicalInfoService.updateHealthStatus(patientId, { healthStatus: healthStatus as HealthStatus, reason }),
+    mutationFn: () => clinicalInfoService.updateHealthStatus(estudianteId, { healthStatus: healthStatus as HealthStatus, reason }),
     onSuccess: () => {
       toast.success("Estado de salud actualizado");
-      queryClient.invalidateQueries({ queryKey: ["clinicalInfo", patientId] });
-      queryClient.invalidateQueries({ queryKey: ["patient", patientId] });
-      queryClient.invalidateQueries({ queryKey: ["healthHistory", patientId] });
+      queryClient.invalidateQueries({ queryKey: ["clinicalInfo", estudianteId] });
+      queryClient.invalidateQueries({ queryKey: ["estudiante", estudianteId] });
+      queryClient.invalidateQueries({ queryKey: ["healthHistory", estudianteId] });
       onOpenChange(false);
       setHealthStatus("");
       setReason("");

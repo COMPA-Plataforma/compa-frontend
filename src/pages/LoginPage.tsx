@@ -101,7 +101,7 @@ function ContactModal({ onClose }: { onClose: () => void }) {
             lineHeight: 1.6,
           }}
         >
-          LifeTracker es una plataforma desarrollada en el marco del curso
+          COMPA es una plataforma desarrollada en el marco del curso
           Proyecto Integrador I — Universidad de Antioquia. Para más
           información, contáctanos:
         </p>
@@ -274,10 +274,10 @@ export default function LoginPage() {
     try {
       const response = await authService.login(data as LoginData);
 
-      if (response.role === "PROFESSIONAL") {
+      if (response.role === "ORIENTADOR") {
         navigate("/dashboard");
-      } else if (response.role === "PATIENT") {
-        navigate("/patient/home");
+      } else if (response.role === "ESTUDIANTE") {
+        navigate("/estudiante/home");
       } else {
         navigate("/");
       }
@@ -339,20 +339,20 @@ export default function LoginPage() {
               fontSize: "2rem", fontWeight: "400", letterSpacing: "-0.02em",
               color: "white", margin: "0 0 0.75rem", lineHeight: 1.2,
             }}>
-              LifeTracker<br />
-              <span style={{ color: "hsl(199, 89%, 65%)", fontStyle: "italic" }}>Wellness</span>
+              COMPA<br />
+              <span style={{ color: "hsl(199, 89%, 65%)", fontStyle: "italic" }}>Acompañamiento estudiantil</span>
             </h1>
 
             <p style={{
               fontSize: "0.95rem", color: "hsl(199, 30%, 70%)",
               lineHeight: 1.7, margin: "0 0 3rem", fontFamily: "system-ui, sans-serif",
             }}>
-              Plataforma para profesionales de la salud mental. Gestiona tus pacientes con claridad y precisión.
+              Plataforma para orientadores de la salud mental. Gestiona tus estudiantes con claridad y precisión.
             </p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               {[
-                { icon: "👥", text: "Gestión integral de pacientes" },
+                { icon: "👥", text: "Gestión integral de estudiantes" },
                 { icon: "📋", text: "Planes de hábitos personalizados" },
                 { icon: "📊", text: "Seguimiento de adherencia" },
               ].map((item) => (
@@ -442,7 +442,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   {...register("email")}
-                  placeholder="profesional@clinica.com"
+                  placeholder="orientador@clinica.com"
                   style={{
                     width: "100%", padding: "0.75rem 1rem",
                     border: errors.email ? "1px solid hsl(0, 72%, 51%)" : "1px solid hsl(214, 20%, 85%)",

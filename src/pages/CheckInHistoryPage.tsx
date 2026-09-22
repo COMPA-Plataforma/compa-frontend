@@ -39,7 +39,7 @@ function MessageState({ message }: { message: string }) {
 
 export default function CheckInHistoryPage() {
   const { id } = useParams<{ id: string }>();
-  const patientId = Number(id);
+  const estudianteId = Number(id);
   const navigate = useNavigate();
 
   const [view, setView] = useState<CheckInHistoryView>("calendar");
@@ -47,9 +47,9 @@ export default function CheckInHistoryPage() {
   const [detailOpen, setDetailOpen] = useState(false);
 
   const { data: summaries = [], isLoading, isError } = useQuery({
-    queryKey: ["checkInLast30", patientId],
-    queryFn: () => checkInService.getLast30Days(patientId),
-    enabled: !Number.isNaN(patientId),
+    queryKey: ["checkInLast30", estudianteId],
+    queryFn: () => checkInService.getLast30Days(estudianteId),
+    enabled: !Number.isNaN(estudianteId),
   });
 
   const sortedSummaries = useMemo(
@@ -75,8 +75,8 @@ export default function CheckInHistoryPage() {
   };
 
   const renderContent = () => {
-    if (Number.isNaN(patientId)) {
-      return <MessageState message="No se pudo identificar el paciente." />;
+    if (Number.isNaN(estudianteId)) {
+      return <MessageState message="No se pudo identificar el estudiante." />;
     }
 
     if (isLoading) {
@@ -121,7 +121,7 @@ export default function CheckInHistoryPage() {
       <CheckInDetailDialog
         open={detailOpen}
         onOpenChange={handleDetailOpenChange}
-        patientId={patientId}
+        estudianteId={estudianteId}
         checkInId={selectedCheckInId}
       />
     </div>

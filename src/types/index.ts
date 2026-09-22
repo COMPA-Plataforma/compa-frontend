@@ -1,4 +1,4 @@
-export type PatientStatus = "ACTIVO" | "INACTIVO";
+export type EstudianteStatus = "ACTIVO" | "INACTIVO";
 export type HealthStatus = "CRITICO" | "ESTABLE" | "EN_OBSERVACION" | "LEVE";
 export type PlanStatus = "ACTIVO" | "INACTIVO";
 export type DeactivationReason = "ALTA_MEDICA" | "ABANDONO_PERDIDA_SEGUIMIENTO";
@@ -25,7 +25,7 @@ export interface ClinicalInfo {
   updatedAt: string;
 }
 
-export interface Patient {
+export interface Estudiante {
   id: number;
   name: string;
   lastName: string;
@@ -33,7 +33,7 @@ export interface Patient {
   identityDocument: string;
   email: string;
   phoneNumber: string;
-  status: PatientStatus;
+  status: EstudianteStatus;
   deactivationReason: string | null;
   deactivatedAt: string | null;
   createdAt: string;
@@ -42,14 +42,14 @@ export interface Patient {
 }
 
 
-export interface PatientListDTO {
+export interface EstudianteListDTO {
   id: number;
   name: string;
   lastName: string;
   identityDocument: string;
   email: string;
   phoneNumber: string;
-  status: PatientStatus;
+  status: EstudianteStatus;
   mainCondition?: string;
   healthStatus?: HealthStatus;
 }
@@ -117,7 +117,7 @@ export interface EvaluationLog {
       umbralMax: number;
     };
   };
-  patient: {
+  estudiante: {
     id: number;
     name: string;
     lastName: string;
@@ -131,8 +131,8 @@ export interface EvaluationLog {
 export type RiskLevel = "VERDE" | "AMARILLO" | "ROJO";
 
 export interface RiskLevelInfo {
-  patientId: number;
-  patientName: string;
+  estudianteId: number;
+  estudianteName: string;
   riskLevel: RiskLevel;
   riskLevelDisplay: string;
   riskLevelDescription: string;

@@ -2,26 +2,26 @@ import api from "@/lib/axiosConfig";
 import type { HabitPlan, HabitTask } from "@/types";
 
 export const habitPlanService = {
-  create: (patientId: number, data: { name: string; description: string; startDate: string; endDate: string }) =>
-    api.post<HabitPlan>(`/api/patients/${patientId}/habit-plans`, data).then((r) => r.data),
+  create: (estudianteId: number, data: { name: string; description: string; startDate: string; endDate: string }) =>
+    api.post<HabitPlan>(`/api/estudiantes/${estudianteId}/habit-plans`, data).then((r) => r.data),
 
-  list: (patientId: number) =>
-    api.get<HabitPlan[]>(`/api/patients/${patientId}/habit-plans`).then((r) => r.data),
+  list: (estudianteId: number) =>
+    api.get<HabitPlan[]>(`/api/estudiantes/${estudianteId}/habit-plans`).then((r) => r.data),
 
-  getActive: (patientId: number) =>
-    api.get<HabitPlan>(`/api/patients/${patientId}/habit-plans/active`).then((r) => r.data),
+  getActive: (estudianteId: number) =>
+    api.get<HabitPlan>(`/api/estudiantes/${estudianteId}/habit-plans/active`).then((r) => r.data),
 
-  getById: (patientId: number, planId: number) =>
-    api.get<HabitPlan>(`/api/patients/${patientId}/habit-plans/${planId}`).then((r) => r.data),
+  getById: (estudianteId: number, planId: number) =>
+    api.get<HabitPlan>(`/api/estudiantes/${estudianteId}/habit-plans/${planId}`).then((r) => r.data),
 
-  update: (patientId: number, planId: number, data: { name: string; description: string; startDate: string; endDate: string }) =>
-    api.put<HabitPlan>(`/api/patients/${patientId}/habit-plans/${planId}`, data).then((r) => r.data),
+  update: (estudianteId: number, planId: number, data: { name: string; description: string; startDate: string; endDate: string }) =>
+    api.put<HabitPlan>(`/api/estudiantes/${estudianteId}/habit-plans/${planId}`, data).then((r) => r.data),
 
-  deactivate: (patientId: number, planId: number) =>
-    api.patch<HabitPlan>(`/api/patients/${patientId}/habit-plans/${planId}/deactivate`).then((r) => r.data),
+  deactivate: (estudianteId: number, planId: number) =>
+    api.patch<HabitPlan>(`/api/estudiantes/${estudianteId}/habit-plans/${planId}/deactivate`).then((r) => r.data),
 
   addTask: (
-    patientId: number,
+    estudianteId: number,
     planId: number,
     data: {
       name: string;
@@ -32,8 +32,8 @@ export const habitPlanService = {
       specificDays?: string[];
     }
   ) =>
-    api.post<HabitTask>(`/api/patients/${patientId}/habit-plans/${planId}/tasks`, data).then((r) => r.data),
+    api.post<HabitTask>(`/api/estudiantes/${estudianteId}/habit-plans/${planId}/tasks`, data).then((r) => r.data),
 
-  deleteTask: (patientId: number, planId: number, taskId: number) =>
-    api.delete(`/api/patients/${patientId}/habit-plans/${planId}/tasks/${taskId}`).then((r) => r.data),
+  deleteTask: (estudianteId: number, planId: number, taskId: number) =>
+    api.delete(`/api/estudiantes/${estudianteId}/habit-plans/${planId}/tasks/${taskId}`).then((r) => r.data),
 };

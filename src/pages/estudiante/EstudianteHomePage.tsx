@@ -4,7 +4,7 @@ import { Flame, CheckCircle2, ArrowRight, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { patientMeService } from "@/services/patientMeService";
+import { estudianteMeService } from "@/services/estudianteMeService";
 
 const EMOTION_MAP: Record<string, { emoji: string; label: string }> = {
   MUY_MAL: { emoji: "😢", label: "Muy mal" },
@@ -14,22 +14,22 @@ const EMOTION_MAP: Record<string, { emoji: string; label: string }> = {
   MUY_BIEN: { emoji: "😄", label: "Muy bien" },
 };
 
-export default function PatientHomePage() {
+export default function EstudianteHomePage() {
   const navigate = useNavigate();
 
   const { data: me, isLoading: meLoading } = useQuery({
-    queryKey: ["patient-me"],
-    queryFn: patientMeService.getMe,
+    queryKey: ["estudiante-me"],
+    queryFn: estudianteMeService.getMe,
   });
 
   const { data: closing } = useQuery({
-    queryKey: ["patient-me-closing"],
-    queryFn: patientMeService.getClosing,
+    queryKey: ["estudiante-me-closing"],
+    queryFn: estudianteMeService.getClosing,
   });
 
   const { data: today, isLoading: todayLoading } = useQuery({
-    queryKey: ["patient-me-today"],
-    queryFn: () => patientMeService.getTodayCheckIn().catch(() => null),
+    queryKey: ["estudiante-me-today"],
+    queryFn: () => estudianteMeService.getTodayCheckIn().catch(() => null),
     retry: false,
   });
 
@@ -76,7 +76,7 @@ export default function PatientHomePage() {
             <div className="flex flex-col gap-2">
               <Button
                 variant="outline"
-                onClick={() => navigate("/patient/history")}
+                onClick={() => navigate("/estudiante/history")}
                 className="gap-2"
               >
                 <Calendar className="h-4 w-4" />
@@ -84,7 +84,7 @@ export default function PatientHomePage() {
               </Button>
               <Button
                 variant="ghost"
-                onClick={() => navigate("/patient/check-in")}
+                onClick={() => navigate("/estudiante/check-in")}
                 className="text-sm"
               >
                 Editar mi check-in
@@ -105,7 +105,7 @@ export default function PatientHomePage() {
               </p>
             </div>
             <Button
-              onClick={() => navigate("/patient/check-in")}
+              onClick={() => navigate("/estudiante/check-in")}
               className="w-full h-12 text-base gap-2"
               size="lg"
             >

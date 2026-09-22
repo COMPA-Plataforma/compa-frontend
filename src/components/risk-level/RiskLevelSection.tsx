@@ -18,7 +18,7 @@ import { RiskBadge } from "@/components/RiskBadge";
 import { riskLevelService } from "@/services/riskLevelService";
 
 interface Props {
-  patientId: number;
+  estudianteId: number;
 }
 
 const formatPct = (value: number) => `${Math.round(value)}%`;
@@ -28,7 +28,7 @@ const formatDate = (value: string) => {
   return `${day}/${month}/${year}`;
 };
 
-export function RiskLevelSection({ patientId }: Props) {
+export function RiskLevelSection({ estudianteId }: Props) {
   const queryClient = useQueryClient();
   const [historyOpen, setHistoryOpen] = useState(false);
 
@@ -37,28 +37,28 @@ export function RiskLevelSection({ patientId }: Props) {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["riskLevel", patientId],
-    queryFn: () => riskLevelService.get(patientId),
-    enabled: !!patientId,
+    queryKey: ["riskLevel", estudianteId],
+    queryFn: () => riskLevelService.get(estudianteId),
+    enabled: !!estudianteId,
     retry: false,
     staleTime: 0,
     refetchOnMount: true,
   });
 
   const { data: history = [], isLoading: historyLoading } = useQuery({
-    queryKey: ["riskLevelHistory", patientId],
-    queryFn: () => riskLevelService.history(patientId),
+    queryKey: ["riskLevelHistory", estudianteId],
+    queryFn: () => riskLevelService.history(estudianteId),
     enabled: historyOpen,
     staleTime: 0,
   });
 
   const evaluate = useMutation({
-    mutationFn: () => riskLevelService.evaluate(patientId),
+    mutationFn: () => riskLevelService.evaluate(estudianteId),
     onSuccess: (data) => {
       toast.success("Riesgo evaluado correctamente");
-      queryClient.setQueryData(["riskLevel", patientId], data);
-      queryClient.invalidateQueries({ queryKey: ["riskLevel", patientId] });
-      queryClient.invalidateQueries({ queryKey: ["riskLevelHistory", patientId] });
+      queryClient.setQueryData(["riskLevel", estudianteId], data);
+      queryClient.invalidateQueries({ queryKey: ["riskLevel", estudianteId] });
+      queryClient.invalidateQueries({ queryKey: ["riskLevelHistory", estudianteId] });
     },
     onError: () => {
       toast.error("Error al evaluar el riesgo");
@@ -76,7 +76,7 @@ export function RiskLevelSection({ patientId }: Props) {
             <div>
               <CardTitle className="text-lg">Nivel de Riesgo</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Prioriza la atención según el cumplimiento del paciente.
+                Prioriza la atención según el cumplimiento del estudiante.
               </p>
             </div>
           </div>

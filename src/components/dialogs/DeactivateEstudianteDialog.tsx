@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { patientService } from "@/services/patientService";
+import { estudianteService } from "@/services/estudianteService";
 import { toast } from "sonner";
 import type { DeactivationReason } from "@/types";
 
@@ -16,18 +16,18 @@ const reasons: { value: DeactivationReason; label: string }[] = [
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  patientId: number | null;
+  estudianteId: number | null;
 }
 
-export function DeactivatePatientDialog({ open, onOpenChange, patientId }: Props) {
+export function DeactivateEstudianteDialog({ open, onOpenChange, estudianteId }: Props) {
   const queryClient = useQueryClient();
   const [reason, setReason] = useState<DeactivationReason | "">("");
 
   const mutation = useMutation({
-    mutationFn: () => patientService.deactivate(patientId!, reason as string),
+    mutationFn: () => estudianteService.deactivate(estudianteId!, reason as string),
     onSuccess: () => {
-      toast.success("Paciente desactivado");
-      queryClient.invalidateQueries({ queryKey: ["patients"] });
+      toast.success("Estudiante desactivado");
+      queryClient.invalidateQueries({ queryKey: ["estudiantes"] });
       onOpenChange(false);
       setReason("");
     },
@@ -37,7 +37,7 @@ export function DeactivatePatientDialog({ open, onOpenChange, patientId }: Props
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Desactivar Paciente</DialogTitle>
+          <DialogTitle>Desactivar Estudiante</DialogTitle>
         </DialogHeader>
         <div className="space-y-2 py-4">
           <Label>Razón de desactivación</Label>

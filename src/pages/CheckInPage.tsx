@@ -28,7 +28,7 @@ type Step = "emotion" | "tasks" | "closing" | "already-done";
 
 export default function CheckInPage() {
   const { id } = useParams<{ id: string }>();
-  const patientId = Number(id);
+  const estudianteId = Number(id);
   const navigate = useNavigate();
 
   const [step, setStep] = useState<Step>("emotion");
@@ -40,29 +40,29 @@ export default function CheckInPage() {
 
   // Fetch today tasks
   const { data: todayTasks = [], isLoading: tasksLoading } = useQuery({
-    queryKey: ["todayTasks", patientId],
-    queryFn: () => checkInService.getTodayTasks(patientId),
+    queryKey: ["todayTasks", estudianteId],
+    queryFn: () => checkInService.getTodayTasks(estudianteId),
     enabled: step === "tasks",
   });
 
   // Fetch closing
   const { data: closing, isLoading: closingLoading } = useQuery({
-    queryKey: ["closing", patientId],
-    queryFn: () => checkInService.getClosing(patientId),
+    queryKey: ["closing", estudianteId],
+    queryFn: () => checkInService.getClosing(estudianteId),
     enabled: step === "closing",
   });
 
   // Submit check-in
   const submitMutation = useMutation({
     mutationFn: (payload: CheckInPayload) =>
-      checkInService.submit(patientId, payload),
+      checkInService.submit(estudianteId, payload),
     onSuccess: () => {
       setStep("closing");
     },
     onError: async (error: any) => {
       if (error?.response?.status === 400) {
         try {
-          const today = await checkInService.getToday(patientId);
+          const today = await checkInService.getToday(estudianteId);
           setExistingCheckIn(today);
         } catch {
           // no hay check-in previo
@@ -77,7 +77,7 @@ export default function CheckInPage() {
   // Update check-in
   const updateMutation = useMutation({
     mutationFn: (payload: CheckInPayload) =>
-      checkInService.update(patientId, payload),
+      checkInService.update(estudianteId, payload),
     onSuccess: () => {
       toast.success("Check-in actualizado");
       setStep("closing");
@@ -148,10 +148,10 @@ export default function CheckInPage() {
     updateMutation.mutate(payload);
   };
 
-  if (!id || isNaN(patientId)) {
+  if (!id || isNaN(estudianteId)) {
     return (
       <p className="text-center py-20 text-muted-foreground">
-        Paciente no válido
+        Estudiante no válido
       </p>
     );
   }
@@ -160,10 +160,10 @@ export default function CheckInPage() {
     <div className="max-w-lg mx-auto py-6 px-4 space-y-6">
       <Button
         variant="ghost"
-        onClick={() => navigate(`/patients/${patientId}`)}
+        onClick={() => navigate(`/estudiantes/${estudianteId}`)}
         className="gap-2"
       >
-        <ArrowLeft className="h-4 w-4" /> Volver al paciente
+        <ArrowLeft className="h-4 w-4" /> Volver al estudiante
       </Button>
 
       {/* PASO 1: Estado emocional */}
@@ -366,7 +366,7 @@ export default function CheckInPage() {
           </Card>
 
           <Button
-            onClick={() => navigate(`/patients/${patientId}`)}
+            onClick={() => navigate(`/estudiantes/${estudianteId}`)}
             className="w-full h-12 text-lg"
             size="lg"
           >
@@ -408,7 +408,7 @@ export default function CheckInPage() {
               Editar mi check-in
             </Button>
             <Button
-              onClick={() => navigate(`/patients/${patientId}`)}
+              onClick={() => navigate(`/estudiantes/${estudianteId}`)}
               className="w-full h-12 text-base"
             >
               Volver al inicio

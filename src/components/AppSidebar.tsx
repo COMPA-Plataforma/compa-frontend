@@ -21,8 +21,8 @@ import { useDarkMode } from "@/hooks/useDarkMode";
 
 const navItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Pacientes", url: "/patients", icon: Users },
-  { title: "Pacientes Inactivos", url: "/patients/inactive", icon: UserX },
+  { title: "Estudiantes", url: "/estudiantes", icon: Users },
+  { title: "Estudiantes Inactivos", url: "/estudiantes/inactive", icon: UserX },
   { title: "Panel de Riesgo", url: "/risk-level", icon: ShieldAlert },
   { title: "Alertas", url: "/alerts", icon: Bell },
 ];
@@ -32,7 +32,7 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const location = useLocation();
   const navigate = useNavigate();
-  const { isDark, toggle } = useDarkMode("professional");
+  const { isDark, toggle } = useDarkMode("orientador");
   const user = authService.getCurrentUser();
 
   const handleLogout = () => {
@@ -53,7 +53,7 @@ export function AppSidebar() {
           <Activity className="h-6 w-6 text-sidebar-primary" />
           {!collapsed && (
             <span className="text-lg font-bold tracking-tight text-sidebar-foreground">
-              LifeTracker
+              COMPA
             </span>
           )}
         </div>
@@ -69,7 +69,7 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.url}
-                      end={item.url === "/patients" || item.url === "/dashboard"}
+                      end={item.url === "/estudiantes" || item.url === "/dashboard"}
                       className="hover:bg-sidebar-accent/50"
                       activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                     >

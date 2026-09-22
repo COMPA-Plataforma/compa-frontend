@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { patientMeService } from "@/services/patientMeService";
+import { estudianteMeService } from "@/services/estudianteMeService";
 import ProgressReportPage from "@/pages/ProgressReportPage";
 import { Loader2 } from "lucide-react";
 
-export default function PatientProgressReportPage() {
+export default function EstudianteProgressReportPage() {
   const { data: me, isLoading } = useQuery({
-    queryKey: ["patient-me"],
-    queryFn: patientMeService.getMe,
+    queryKey: ["estudiante-me"],
+    queryFn: estudianteMeService.getMe,
   });
 
   if (isLoading) {
@@ -19,6 +19,6 @@ export default function PatientProgressReportPage() {
 
   if (!me) return null;
 
-  // Inyectamos el id del paciente en la URL para que ProgressReportPage lo lea
-  return <ProgressReportPage overridePatientId={me.id} />;
+  // Inyectamos el id del estudiante en la URL para que ProgressReportPage lo lea
+  return <ProgressReportPage overrideEstudianteId={me.id} />;
 }

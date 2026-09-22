@@ -9,7 +9,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("wellness_token");
+  const token = localStorage.getItem("compa_token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -20,8 +20,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 || error.response?.status === 403) {
-      localStorage.removeItem("wellness_token");
-      localStorage.removeItem("wellness_user");
+      localStorage.removeItem("compa_token");
+      localStorage.removeItem("compa_user");
       window.location.href = "/login";
       return Promise.reject(error);
     }

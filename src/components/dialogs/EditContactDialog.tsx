@@ -4,18 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { patientService } from "@/services/patientService";
+import { estudianteService } from "@/services/estudianteService";
 import { toast } from "sonner";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  patientId: number | null;
+  estudianteId: number | null;
   currentEmail: string;
   currentPhone: string;
 }
 
-export function EditContactDialog({ open, onOpenChange, patientId, currentEmail, currentPhone }: Props) {
+export function EditContactDialog({ open, onOpenChange, estudianteId, currentEmail, currentPhone }: Props) {
   const queryClient = useQueryClient();
   const [email, setEmail] = useState(currentEmail);
   const [phoneNumber, setPhoneNumber] = useState(currentPhone);
@@ -26,11 +26,11 @@ export function EditContactDialog({ open, onOpenChange, patientId, currentEmail,
   }, [currentEmail, currentPhone]);
 
   const mutation = useMutation({
-    mutationFn: () => patientService.updateContact(patientId!, { email, phoneNumber }),
+    mutationFn: () => estudianteService.updateContact(estudianteId!, { email, phoneNumber }),
     onSuccess: () => {
       toast.success("Contacto actualizado");
-      queryClient.invalidateQueries({ queryKey: ["patients"] });
-      queryClient.invalidateQueries({ queryKey: ["patient", patientId] });
+      queryClient.invalidateQueries({ queryKey: ["estudiantes"] });
+      queryClient.invalidateQueries({ queryKey: ["estudiante", estudianteId] });
       onOpenChange(false);
     },
   });
