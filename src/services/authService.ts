@@ -23,8 +23,8 @@ export interface AuthResponse {
   role: string;
 }
 
-const TOKEN_KEY = "wellness_token";
-const USER_KEY = "wellness_user";
+const TOKEN_KEY = "compa_token";
+const USER_KEY = "compa_user";
 
 export const authService = {
   async register(data: RegisterData): Promise<void> {

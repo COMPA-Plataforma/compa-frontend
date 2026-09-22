@@ -10,11 +10,11 @@ export interface AdherenceSnapshot {
 }
 
 export const adherenceService = {
-  getLatestSnapshot: (patientId: number) =>
-    api.get<AdherenceSnapshot>(`/api/patients/${patientId}/adherence/snapshot`)
+  getLatestSnapshot: (estudianteId: number) =>
+    api.get<AdherenceSnapshot>(`/api/estudiantes/${estudianteId}/adherence/snapshot`)
        .then((r) => r.data),
 
-  getAllSnapshots: (patientId: number) =>
-    api.get<AdherenceSnapshot[]>(`/api/patients/${patientId}/adherence/snapshots`)
+  getAllSnapshots: (estudianteId: number) =>
+    api.get<AdherenceSnapshot[]>(`/api/estudiantes/${estudianteId}/adherence/snapshots`)
        .then((r) => r.data),
 };

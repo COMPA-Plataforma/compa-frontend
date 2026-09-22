@@ -8,13 +8,13 @@ import { format } from "date-fns";
 
 export default function AdherencePage() {
   const { id } = useParams<{ id: string }>();
-  const patientId = Number(id);
+  const estudianteId = Number(id);
   const navigate = useNavigate();
 
   const { data: snapshot, isLoading } = useQuery({
-    queryKey: ["adherenceSnapshot", patientId],
-    queryFn: () => adherenceService.getLatestSnapshot(patientId),
-    enabled: !!id && !isNaN(patientId),
+    queryKey: ["adherenceSnapshot", estudianteId],
+    queryFn: () => adherenceService.getLatestSnapshot(estudianteId),
+    enabled: !!id && !isNaN(estudianteId),
   });
 
   return (
@@ -39,7 +39,7 @@ export default function AdherencePage() {
       ) : !snapshot ? (
         <Card>
           <CardContent className="pt-6 text-center text-muted-foreground">
-            No hay métricas calculadas aún. El paciente debe realizar su primer check-in.
+            No hay métricas calculadas aún. El estudiante debe realizar su primer check-in.
           </CardContent>
         </Card>
       ) : (

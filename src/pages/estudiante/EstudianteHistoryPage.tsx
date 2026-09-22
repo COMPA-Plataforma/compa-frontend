@@ -8,7 +8,7 @@ import { CheckInHistoryCalendar } from "@/components/check-in-history/CheckInHis
 import { CheckInHistoryList } from "@/components/check-in-history/CheckInHistoryList";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { patientMeService } from "@/services/patientMeService";
+import { estudianteMeService } from "@/services/estudianteMeService";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 
@@ -30,19 +30,19 @@ function MessageState({ message }: { message: string }) {
   );
 }
 
-export default function PatientHistoryPage() {
+export default function EstudianteHistoryPage() {
   const [view, setView] = useState<CheckInHistoryView>("calendar");
   const [selectedCheckInId, setSelectedCheckInId] = useState<number | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
 
   const { data: summaries = [], isLoading, isError } = useQuery({
     queryKey: ["me-checkInLast30"],
-    queryFn: patientMeService.getLast30Days,
+    queryFn: estudianteMeService.getLast30Days,
   });
 
   const { data: detail, isLoading: detailLoading } = useQuery({
     queryKey: ["me-checkInDetail", selectedCheckInId],
-    queryFn: () => patientMeService.getCheckInDetail(selectedCheckInId!),
+    queryFn: () => estudianteMeService.getCheckInDetail(selectedCheckInId!),
     enabled: detailOpen && selectedCheckInId !== null,
   });
 

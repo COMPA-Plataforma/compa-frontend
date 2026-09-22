@@ -21,7 +21,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <header className="h-14 flex items-center justify-between border-b bg-card px-4">
             <div className="flex items-center">
               <SidebarTrigger className="mr-4" />
-              <h1 className="text-lg font-semibold text-foreground">LifeTracker</h1>
+              <h1 className="text-lg font-semibold text-foreground">COMPA</h1>
             </div>
             <Button
               variant="ghost"
@@ -35,7 +35,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </header>
           <main className="flex-1 p-6 overflow-auto">{children}</main>
           <footer className="border-t bg-blue-100 px-6 py-3 text-center text-sm text-muted-foreground">
-            <p className="font-medium text-foreground">LifeTracker Wellness</p>
+            <p className="font-medium text-foreground">COMPA - Acompañamiento estudiantil</p>
             <p className="mt-1">
               Desarrollado por{" "}
               <span className="font-medium text-foreground">Mariana Carvajal Rueda</span>

@@ -19,13 +19,13 @@ export interface HabitPlanDTO {
 export interface ConclusionDTO {
   id: number;
   content: string;
-  therapistName: string;
+  orientadorName: string;
   createdAt: string;
 }
 
 export interface ProgressReport {
-  patientFullName: string;
-  therapistFullName: string;
+  estudianteFullName: string;
+  orientadorFullName: string;
   generatedAt: string;
   weeklyCompliance: number;
   currentStreak: number;
@@ -41,16 +41,16 @@ export interface ProgressReport {
 }
 
 export const progressReportService = {
-  getReport: (patientId: number) =>
+  getReport: (estudianteId: number) =>
     api
-      .get<ProgressReport>(`/api/patients/${patientId}/progress-report`)
+      .get<ProgressReport>(`/api/estudiantes/${estudianteId}/progress-report`)
       .then((r) => r.data),
 
-  addConclusion: (patientId: number, content: string, professionalId: number) =>
+  addConclusion: (estudianteId: number, content: string, orientadorId: number) =>
     api
-      .post(`/api/patients/${patientId}/progress-report/conclusions`, {
+      .post(`/api/estudiantes/${estudianteId}/progress-report/conclusions`, {
         content,
-        professionalId,
+        orientadorId,
       })
       .then((r) => r.data),
 };

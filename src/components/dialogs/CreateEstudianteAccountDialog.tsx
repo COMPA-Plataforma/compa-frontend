@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { patientService } from "@/services/patientService";
+import { estudianteService } from "@/services/estudianteService";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { AxiosError } from "axios";
@@ -26,7 +26,7 @@ import { AxiosError } from "axios";
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  professionalId: number;
+  orientadorId: number;
 }
 
 const initialForm = {
@@ -38,16 +38,16 @@ const initialForm = {
   phoneNumber: "",
 };
 
-export function CreatePatientAccountDialog({ open, onOpenChange, professionalId }: Props) {
+export function CreateEstudianteAccountDialog({ open, onOpenChange, orientadorId }: Props) {
   const queryClient = useQueryClient();
   const [form, setForm] = useState(initialForm);
 
   const mutation = useMutation({
-    mutationFn: () => patientService.createAccount(professionalId, form),
+    mutationFn: () => estudianteService.createAccount(orientadorId, form),
     onSuccess: () => {
-      toast.success("Cuenta creada. Se enviaron las credenciales al paciente.");
-      queryClient.invalidateQueries({ queryKey: ["patients"] });
-      queryClient.invalidateQueries({ queryKey: ["patientsByProfessional", professionalId] });
+      toast.success("Cuenta creada. Se enviaron las credenciales al estudiante.");
+      queryClient.invalidateQueries({ queryKey: ["estudiantes"] });
+      queryClient.invalidateQueries({ queryKey: ["estudiantesByOrientador", orientadorId] });
       setForm(initialForm);
       onOpenChange(false);
     },
@@ -79,9 +79,9 @@ export function CreatePatientAccountDialog({ open, onOpenChange, professionalId 
     <Dialog open={open} onOpenChange={(o) => { if (!o) setForm(initialForm); onOpenChange(o); }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Nuevo Paciente</DialogTitle>
+          <DialogTitle>Nuevo Estudiante</DialogTitle>
           <DialogDescription>
-            El paciente recibirá un email con sus credenciales de acceso temporales
+            El estudiante recibirá un email con sus credenciales de acceso temporales
           </DialogDescription>
         </DialogHeader>
 
@@ -152,7 +152,7 @@ export function CreatePatientAccountDialog({ open, onOpenChange, professionalId 
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              placeholder="paciente@correo.com"
+              placeholder="estudiante@correo.com"
             />
           </div>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export function useDarkMode(role: "professional" | "patient" = "professional") {
+export function useDarkMode(role: "orientador" | "estudiante" = "orientador") {
   const key = `theme_${role}`;
 
   const [isDark, setIsDark] = useState<boolean>(() => {

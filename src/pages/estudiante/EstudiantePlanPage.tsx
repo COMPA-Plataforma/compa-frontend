@@ -3,15 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { ClipboardList, Calendar, Printer, CheckSquare } from "lucide-react";
-import { patientMeService } from "@/services/patientMeService";
+import { estudianteMeService } from "@/services/estudianteMeService";
 import { authService } from "@/services/authService";
 
-export default function PatientPlanPage() {
+export default function EstudiantePlanPage() {
   const currentUser = authService.getCurrentUser();
 
   const { data: plan, isLoading, isError } = useQuery({
     queryKey: ["me-plan"],
-    queryFn: () => patientMeService.getActivePlan().catch(() => null),
+    queryFn: () => estudianteMeService.getActivePlan().catch(() => null),
     retry: false,
   });
 
@@ -104,7 +104,7 @@ export default function PatientPlanPage() {
                 <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
               </svg>
               <span style={{ fontWeight: 700, color: "hsl(199, 89%, 18%)", fontSize: "1rem" }}>
-                LifeTracker Wellness
+                COMPA - Acompañamiento estudiantil
               </span>
             </div>
             <p style={{ margin: 0, fontSize: "0.8rem", color: "#6b7280" }}>
@@ -112,7 +112,7 @@ export default function PatientPlanPage() {
             </p>
           </div>
           <div style={{ textAlign: "right", fontSize: "0.8rem", color: "#6b7280" }}>
-            <p style={{ margin: 0 }}>Paciente: <strong>{currentUser?.name} {currentUser?.lastName}</strong></p>
+            <p style={{ margin: 0 }}>Estudiante: <strong>{currentUser?.name} {currentUser?.lastName}</strong></p>
             <p style={{ margin: 0 }}>Fecha de impresión: {today}</p>
           </div>
         </div>
@@ -192,7 +192,7 @@ export default function PatientPlanPage() {
             textAlign: "center", fontSize: "0.75rem", color: "#9ca3af",
           }}
         >
-          <p style={{ margin: 0 }}>LifeTracker Wellness — Documento generado el {today}</p>
+          <p style={{ margin: 0 }}>COMPA - Acompañamiento estudiantil — Documento generado el {today}</p>
           <p style={{ margin: "0.25rem 0 0" }}>Este documento es de uso personal y confidencial.</p>
         </div>
 

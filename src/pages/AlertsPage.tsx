@@ -54,10 +54,10 @@ export default function AlertsPage() {
     onSuccess: (_, alertId) => {
       queryClient.invalidateQueries({ queryKey: ["alerts"] });
       queryClient.invalidateQueries({ queryKey: ["alerts-count"] });
-      // Navegar al detalle del paciente
+      // Navegar al detalle del estudiante
       const alert = alerts?.find((a) => a.id === alertId);
       if (alert) {
-        navigate(`/patients/${alert.patientId}`);
+        navigate(`/estudiantes/${alert.estudianteId}`);
       }
     },
   });
@@ -182,7 +182,7 @@ export default function AlertsPage() {
             ¡Sin alertas pendientes!
           </p>
           <p style={{ margin: "0.25rem 0 0", fontSize: "0.875rem", color: "#9ca3af" }}>
-            Todos los pacientes están bajo control
+            Todos los estudiantes están bajo control
           </p>
         </div>
       ) : (
@@ -205,7 +205,7 @@ export default function AlertsPage() {
                       </span>
                     </div>
                     <p style={{ margin: "0 0 0.3rem", fontSize: "0.95rem", fontWeight: 600, color: "#111827" }}>
-                      {alert.patientName}
+                      {alert.estudianteName}
                     </p>
                     <p style={{ margin: "0 0 0.4rem", fontSize: "0.85rem", color: "#4b5563", lineHeight: 1.5 }}>
                       {alert.description}
@@ -232,7 +232,7 @@ export default function AlertsPage() {
                     <button
                       onClick={() => {
                         setConfirmIgnoreId(alert.id);
-                        setConfirmIgnoreName(alert.patientName);
+                        setConfirmIgnoreName(alert.estudianteName);
                       }}
                       style={{
                         display: "flex", alignItems: "center", gap: "0.35rem",
@@ -284,7 +284,7 @@ export default function AlertsPage() {
                     </span>
                   </div>
                   <p style={{ margin: "0 0 0.2rem", fontSize: "0.9rem", fontWeight: 600, color: "#374151" }}>
-                    {alert.patientName}
+                    {alert.estudianteName}
                   </p>
                   <p style={{ margin: "0 0 0.3rem", fontSize: "0.82rem", color: "#6b7280" }}>
                     {alert.description}

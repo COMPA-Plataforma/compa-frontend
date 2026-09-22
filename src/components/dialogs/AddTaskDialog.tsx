@@ -13,11 +13,11 @@ const PRIORITIES = ["ALTA", "MEDIA", "BAJA"] as const;
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  patientId: number;
+  estudianteId: number;
   planId: number;
 }
 
-export function AddTaskDialog({ open, onOpenChange, patientId, planId }: Props) {
+export function AddTaskDialog({ open, onOpenChange, estudianteId, planId }: Props) {
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -44,7 +44,7 @@ export function AddTaskDialog({ open, onOpenChange, patientId, planId }: Props) 
 
   const mutation = useMutation({
     mutationFn: () =>
-      habitPlanService.addTask(patientId, planId, {
+      habitPlanService.addTask(estudianteId, planId, {
         name,
         description,
         priority,
@@ -54,7 +54,7 @@ export function AddTaskDialog({ open, onOpenChange, patientId, planId }: Props) 
       }),
     onSuccess: () => {
       toast.success("Tarea agregada");
-      queryClient.invalidateQueries({ queryKey: ["habitPlans", patientId] });
+      queryClient.invalidateQueries({ queryKey: ["habitPlans", estudianteId] });
       handleClose();
     },
   });

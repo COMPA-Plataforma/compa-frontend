@@ -1,4 +1,4 @@
-import type { HealthStatus, PatientStatus, PlanStatus } from "@/types";
+import type { HealthStatus, EstudianteStatus, PlanStatus } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -11,7 +11,7 @@ const statusConfig: Record<string, { label: string; className: string }> = {
   LEVE: { label: "Leve", className: "bg-status-mild/15 text-status-mild border-status-mild/30" },
 };
 
-export function StatusBadge({ status }: { status: PatientStatus | HealthStatus | PlanStatus }) {
+export function StatusBadge({ status }: { status: EstudianteStatus | HealthStatus | PlanStatus }) {
   const config = statusConfig[status] || { label: status, className: "" };
   return (
     <Badge variant="outline" className={cn("font-medium", config.className)}>

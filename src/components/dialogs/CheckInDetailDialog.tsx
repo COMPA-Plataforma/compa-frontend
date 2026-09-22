@@ -14,14 +14,14 @@ import { es } from "date-fns/locale";
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  patientId: number;
+  estudianteId: number;
   checkInId: number | null;
 }
 
-export function CheckInDetailDialog({ open, onOpenChange, patientId, checkInId }: Props) {
+export function CheckInDetailDialog({ open, onOpenChange, estudianteId, checkInId }: Props) {
   const { data: detail, isLoading } = useQuery({
-    queryKey: ["checkInDetail", patientId, checkInId],
-    queryFn: () => checkInService.getDetail(patientId, checkInId!),
+    queryKey: ["checkInDetail", estudianteId, checkInId],
+    queryFn: () => checkInService.getDetail(estudianteId, checkInId!),
     enabled: open && checkInId !== null,
   });
 

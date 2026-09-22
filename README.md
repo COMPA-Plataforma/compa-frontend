@@ -1,6 +1,6 @@
-# LifeTrack Frontend
+# COMPA Frontend
 
-> Interfaz web para el sistema de gestión de terapeutas y pacientes
+> COMPA - Acompañamiento estudiantil: interfaz web para el sistema de gestión de orientadores y estudiantes
 
 **React 18 | TypeScript | Vite | Tailwind CSS | Vercel**
 
@@ -8,9 +8,9 @@
 
 ## Descripción del Proyecto
 
-LifeTrack es una aplicación web diseñada para terapeutas que necesitan gestionar la información clínica de sus pacientes, hacer seguimiento de su estado de salud y asignarles planes de hábitos diarios. Los pacientes pueden realizar un registro diario (check-in) de su estado emocional y el cumplimiento de sus tareas en menos de 30 segundos.
+COMPA es una aplicación web diseñada para orientadores que necesitan gestionar la información clínica de sus estudiantes, hacer seguimiento de su estado de salud y asignarles planes de hábitos diarios. Los estudiantes pueden realizar un registro diario (check-in) de su estado emocional y el cumplimiento de sus tareas en menos de 30 segundos.
 
-El sistema garantiza que el historial clínico nunca se elimina físicamente, mantiene trazabilidad de todos los cambios de estado con justificación, y genera rachas de cumplimiento para motivar al paciente.
+El sistema garantiza que el historial clínico nunca se elimina físicamente, mantiene trazabilidad de todos los cambios de estado con justificación, y genera rachas de cumplimiento para motivar al estudiante.
 
 ---
 ## Equipo de Desarrollo
@@ -30,7 +30,7 @@ El proyecto sigue una estructura modular orientada a funcionalidades:
 ```
 src/
 ├── components/
-│   ├── dialogs/        → Modales: crear paciente, ficha clínica, plan de hábitos, acudiente
+│   ├── dialogs/        → Modales: crear estudiante, ficha clínica, plan de hábitos, acudiente
 │   └── ui/             → Componentes de diseño base (shadcn/ui)
 ├── pages/              → Vistas principales por ruta
 ├── services/           → Llamadas a la API REST del backend (axios)
@@ -49,7 +49,7 @@ src/
 
 - Node.js 18+
 - npm o bun
-- Backend de LifeTrack corriendo en `http://localhost:8080`
+- Backend de COMPA corriendo en `http://localhost:8080`
 
 ### Pasos
 

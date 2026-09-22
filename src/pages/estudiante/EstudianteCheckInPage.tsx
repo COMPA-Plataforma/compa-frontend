@@ -8,7 +8,7 @@ import {
   type CheckInPayload,
   type TaskResponse,
 } from "@/services/checkInService";
-import { patientMeService } from "@/services/patientMeService";
+import { estudianteMeService } from "@/services/estudianteMeService";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, Flame, CheckCircle2, XCircle } from "lucide-react";
@@ -26,7 +26,7 @@ const EMOTION_MAP: Record<string, { emoji: string; label: string }> = {
 
 type Step = "emotion" | "tasks" | "closing" | "already-done";
 
-export default function PatientCheckInPage() {
+export default function EstudianteCheckInPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -40,27 +40,27 @@ export default function PatientCheckInPage() {
 
   const { data: todayTasks = [], isLoading: tasksLoading } = useQuery({
     queryKey: ["me-todayTasks"],
-    queryFn: patientMeService.getTodayTasks,
+    queryFn: estudianteMeService.getTodayTasks,
     enabled: step === "tasks",
   });
 
   const { data: closing, isLoading: closingLoading } = useQuery({
     queryKey: ["me-closing-checkin"],
-    queryFn: patientMeService.getClosing,
+    queryFn: estudianteMeService.getClosing,
     enabled: step === "closing",
   });
 
   const submitMutation = useMutation({
-    mutationFn: (payload: CheckInPayload) => patientMeService.createCheckIn(payload),
+    mutationFn: (payload: CheckInPayload) => estudianteMeService.createCheckIn(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["patient-me-today"] });
-      queryClient.invalidateQueries({ queryKey: ["patient-me-closing"] });
+      queryClient.invalidateQueries({ queryKey: ["estudiante-me-today"] });
+      queryClient.invalidateQueries({ queryKey: ["estudiante-me-closing"] });
       setStep("closing");
     },
     onError: async (error: any) => {
       if (error?.response?.status === 400) {
         try {
-          const today = await patientMeService.getTodayCheckIn();
+          const today = await estudianteMeService.getTodayCheckIn();
           setExistingCheckIn(today);
         } catch { /* noop */ }
         setStep("already-done");
@@ -71,10 +71,10 @@ export default function PatientCheckInPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (payload: CheckInPayload) => patientMeService.updateCheckIn(payload),
+    mutationFn: (payload: CheckInPayload) => estudianteMeService.updateCheckIn(payload),
     onSuccess: () => {
       toast.success("Check-in actualizado");
-      queryClient.invalidateQueries({ queryKey: ["patient-me-today"] });
+      queryClient.invalidateQueries({ queryKey: ["estudiante-me-today"] });
       setStep("closing");
     },
     onError: () => toast.error("No se pudo actualizar el check-in"),
@@ -85,7 +85,7 @@ export default function PatientCheckInPage() {
     queryKey: ["me-today-check"],
     queryFn: async () => {
       try {
-        const today = await patientMeService.getTodayCheckIn();
+        const today = await estudianteMeService.getTodayCheckIn();
         if (today && step === "emotion" && !isEditing) {
           setExistingCheckIn(today);
           setStep("already-done");
@@ -307,7 +307,7 @@ export default function PatientCheckInPage() {
                 </CardContent>
               </Card>
 
-              <Button onClick={() => navigate("/patient/home")} className="w-full h-12" size="lg">
+              <Button onClick={() => navigate("/estudiante/home")} className="w-full h-12" size="lg">
                 Volver al inicio
               </Button>
             </>
@@ -338,7 +338,7 @@ export default function PatientCheckInPage() {
             <Button onClick={handleEditCheckIn} variant="outline" className="w-full h-12">
               Editar mi check-in
             </Button>
-            <Button onClick={() => navigate("/patient/home")} className="w-full h-12">
+            <Button onClick={() => navigate("/estudiante/home")} className="w-full h-12">
               Volver al inicio
             </Button>
           </div>

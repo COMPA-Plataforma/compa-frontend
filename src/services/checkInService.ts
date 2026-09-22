@@ -77,48 +77,48 @@ export interface CheckInDetail {
 }
 
 export const checkInService = {
-  getEmotionalStates: (patientId: number) =>
+  getEmotionalStates: (estudianteId: number) =>
     api
-      .get<string[]>(`/api/patients/${patientId}/check-in/emotional-states`)
+      .get<string[]>(`/api/estudiantes/${estudianteId}/check-in/emotional-states`)
       .then((r) => r.data),
 
-  getTodayTasks: (patientId: number) =>
+  getTodayTasks: (estudianteId: number) =>
     api
-      .get<TodayTask[]>(`/api/patients/${patientId}/check-in/today-tasks`)
+      .get<TodayTask[]>(`/api/estudiantes/${estudianteId}/check-in/today-tasks`)
       .then((r) => r.data),
 
-  submit: (patientId: number, payload: CheckInPayload) =>
+  submit: (estudianteId: number, payload: CheckInPayload) =>
     api
-      .post(`/api/patients/${patientId}/check-in`, payload)
+      .post(`/api/estudiantes/${estudianteId}/check-in`, payload)
       .then((r) => r.data),
 
-  update: (patientId: number, payload: CheckInPayload) =>
+  update: (estudianteId: number, payload: CheckInPayload) =>
     api
-      .put(`/api/patients/${patientId}/check-in`, payload)
+      .put(`/api/estudiantes/${estudianteId}/check-in`, payload)
       .then((r) => r.data),
 
-  getClosing: (patientId: number) =>
+  getClosing: (estudianteId: number) =>
     api
-      .get<ClosingResponse>(`/api/patients/${patientId}/check-in/closing`)
+      .get<ClosingResponse>(`/api/estudiantes/${estudianteId}/check-in/closing`)
       .then((r) => r.data),
 
-  getToday: (patientId: number) =>
+  getToday: (estudianteId: number) =>
     api
-      .get<TodayCheckIn>(`/api/patients/${patientId}/check-in/today`)
+      .get<TodayCheckIn>(`/api/estudiantes/${estudianteId}/check-in/today`)
       .then((r) => r.data),
 
-  getLast30Days: (patientId: number) =>
+  getLast30Days: (estudianteId: number) =>
     api
-      .get<CheckInSummary[]>(`/api/patients/${patientId}/check-in/last-30-days`)
+      .get<CheckInSummary[]>(`/api/estudiantes/${estudianteId}/check-in/last-30-days`)
       .then((r) => r.data),
 
-  getDetail: (patientId: number, checkInId: number) =>
+  getDetail: (estudianteId: number, checkInId: number) =>
     api
-      .get<CheckInDetail>(`/api/patients/${patientId}/check-in/${checkInId}/detail`)
+      .get<CheckInDetail>(`/api/estudiantes/${estudianteId}/check-in/${checkInId}/detail`)
       .then((r) => r.data),
 
-  getTasksForToday: (patientId: number) =>
+  getTasksForToday: (estudianteId: number) =>
   api
-    .get<TodayTask[]>(`/api/patients/${patientId}/habit-plans/tasks/today`)
+    .get<TodayTask[]>(`/api/estudiantes/${estudianteId}/habit-plans/tasks/today`)
     .then((r) => r.data),
 };

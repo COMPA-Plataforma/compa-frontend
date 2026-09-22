@@ -20,7 +20,7 @@ export default function ActivateAccountPage() {
     }
     // Endpoint público — sin Authorization header
     axios
-      .post(`${API_URL}/api/patients/activate`, null, { params: { token } })
+      .post(`${API_URL}/api/estudiantes/activate`, null, { params: { token } })
       .then(() => setStatus("success"))
       .catch(() => setStatus("error"));
   }, [token]);

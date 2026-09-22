@@ -6,17 +6,17 @@ import { Home, CheckCircle2, Calendar, ClipboardList, LogOut, FileText, BarChart
 import { useDarkMode } from "@/hooks/useDarkMode";
 
 const navItems = [
-  { to: "/patient/home", label: "Inicio", icon: Home },
-  { to: "/patient/check-in", label: "Check-in", icon: CheckCircle2 },
-  { to: "/patient/history", label: "Historial", icon: Calendar },
-  { to: "/patient/plan", label: "Mi plan", icon: ClipboardList },
-  { to: "/patient/progress-report", label: "Mi progreso", icon: BarChart2 },
+  { to: "/estudiante/home", label: "Inicio", icon: Home },
+  { to: "/estudiante/check-in", label: "Check-in", icon: CheckCircle2 },
+  { to: "/estudiante/history", label: "Historial", icon: Calendar },
+  { to: "/estudiante/plan", label: "Mi plan", icon: ClipboardList },
+  { to: "/estudiante/progress-report", label: "Mi progreso", icon: BarChart2 },
 ];
 
-export default function PatientLayout({ children }: { children: React.ReactNode }) {
+export default function EstudianteLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const user = authService.getCurrentUser();
-  const { isDark, toggle } = useDarkMode("patient");
+  const { isDark, toggle } = useDarkMode("estudiante");
 
   const handleLogout = () => {
     authService.logout();
@@ -26,9 +26,9 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
-      <header id="patient-header" className="sticky top-0 z-30 flex items-center justify-between border-b bg-card px-4 py-3 shadow-sm">
+      <header id="estudiante-header" className="sticky top-0 z-30 flex items-center justify-between border-b bg-card px-4 py-3 shadow-sm">
         <div className="flex flex-col">
-          <h1 className="text-base font-semibold text-foreground">LifeTracker</h1>
+          <h1 className="text-base font-semibold text-foreground">COMPA</h1>
           {user && (
             <p className="text-xs text-muted-foreground">
               Hola, {user.name}
@@ -37,7 +37,7 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
         </div>
         <div className="flex items-center gap-1">
           <NavLink
-            to="/patient/consents"
+            to="/estudiante/consents"
             className={({ isActive }) =>
               cn(
                 "p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent",
@@ -78,7 +78,7 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
       </main>
 
       {/* Bottom navigation */}
-      <nav id="patient-nav" className="fixed bottom-0 left-0 right-0 z-30 border-t bg-card shadow-lg">
+      <nav id="estudiante-nav" className="fixed bottom-0 left-0 right-0 z-30 border-t bg-card shadow-lg">
         <div className="grid grid-cols-5 max-w-2xl mx-auto">
           {navItems.map(({ to, label, icon: Icon }) => (
             <NavLink

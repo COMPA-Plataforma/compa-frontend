@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { patientService, type CreatePatientPayload } from "@/services/patientService";
+import { estudianteService, type CreateEstudiantePayload } from "@/services/estudianteService";
 import { toast } from "sonner";
 import type { DocumentType } from "@/types";
 
@@ -33,7 +33,7 @@ const initialGuardian = {
   phoneNumber: "",
 };
 
-export function CreatePatientDialog({ open, onOpenChange }: Props) {
+export function CreateEstudianteDialog({ open, onOpenChange }: Props) {
   const queryClient = useQueryClient();
   const [form, setForm] = useState(initialForm);
   const [guardian, setGuardian] = useState(initialGuardian);
@@ -42,15 +42,15 @@ export function CreatePatientDialog({ open, onOpenChange }: Props) {
 
   const mutation = useMutation({
     mutationFn: () => {
-      const payload: CreatePatientPayload = {
+      const payload: CreateEstudiantePayload = {
         ...form,
         ...(needsGuardian ? { guardian } : {}),
       };
-      return patientService.create(payload);
+      return estudianteService.create(payload);
     },
     onSuccess: () => {
-      toast.success("Paciente creado exitosamente");
-      queryClient.invalidateQueries({ queryKey: ["patients"] });
+      toast.success("Estudiante creado exitosamente");
+      queryClient.invalidateQueries({ queryKey: ["estudiantes"] });
       onOpenChange(false);
       setForm(initialForm);
       setGuardian(initialGuardian);
@@ -61,10 +61,10 @@ export function CreatePatientDialog({ open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Nuevo Paciente</DialogTitle>
+          <DialogTitle>Nuevo Estudiante</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          {/* Patient fields */}
+          {/* Estudiante fields */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Nombre</Label>
@@ -164,7 +164,7 @@ export function CreatePatientDialog({ open, onOpenChange }: Props) {
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
           <Button onClick={() => mutation.mutate()} disabled={mutation.isPending}>
-            {mutation.isPending ? "Creando..." : "Crear Paciente"}
+            {mutation.isPending ? "Creando..." : "Crear Estudiante"}
           </Button>
         </DialogFooter>
       </DialogContent>

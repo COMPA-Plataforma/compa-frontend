@@ -15,10 +15,10 @@ import { toast } from "sonner";
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  patientId: number;
+  estudianteId: number;
 }
 
-export function CreateHabitPlanDialog({ open, onOpenChange, patientId }: Props) {
+export function CreateHabitPlanDialog({ open, onOpenChange, estudianteId }: Props) {
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -27,7 +27,7 @@ export function CreateHabitPlanDialog({ open, onOpenChange, patientId }: Props) 
 
   const mutation = useMutation({
     mutationFn: () =>
-      habitPlanService.create(patientId, {
+      habitPlanService.create(estudianteId, {
         name,
         description,
         startDate: startDate ? format(startDate, "yyyy-MM-dd") : "",
@@ -35,7 +35,7 @@ export function CreateHabitPlanDialog({ open, onOpenChange, patientId }: Props) 
       }),
     onSuccess: () => {
       toast.success("Plan de hábitos creado");
-      queryClient.invalidateQueries({ queryKey: ["habitPlans", patientId] });
+      queryClient.invalidateQueries({ queryKey: ["habitPlans", estudianteId] });
       onOpenChange(false);
       setName("");
       setDescription("");

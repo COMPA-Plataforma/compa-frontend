@@ -5,18 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle2, FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { patientMeService } from "@/services/patientMeService";
+import { estudianteMeService } from "@/services/estudianteMeService";
 
-export default function PatientConsentsPage() {
+export default function EstudianteConsentsPage() {
   const queryClient = useQueryClient();
 
   const { data: consents = [], isLoading } = useQuery({
     queryKey: ["me-consents"],
-    queryFn: patientMeService.getConsents,
+    queryFn: estudianteMeService.getConsents,
   });
 
   const acceptMutation = useMutation({
-    mutationFn: (consentId: number) => patientMeService.acceptConsent(consentId),
+    mutationFn: (consentId: number) => estudianteMeService.acceptConsent(consentId),
     onSuccess: () => {
       toast.success("Consentimiento aceptado");
       queryClient.invalidateQueries({ queryKey: ["me-consents"] });

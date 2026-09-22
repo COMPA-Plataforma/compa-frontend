@@ -138,8 +138,8 @@ All colors MUST be HSL.
 
 @media print {
   .no-print { display: none !important; }
-  #patient-header { display: none !important; }
-  #patient-nav { display: none !important; }
+  #estudiante-header { display: none !important; }
+  #estudiante-nav { display: none !important; }
   .print-header { display: flex !important; }
   .print-footer { display: block !important; }
   .print-checkbox { display: block !important; }

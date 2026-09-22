@@ -4,10 +4,10 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import AppLayout from "@/components/AppLayout";
-import PatientLayout from "@/components/PatientLayout";
-import PatientListPage from "@/pages/PatientListPage";
-import PatientDetailPage from "@/pages/PatientDetailPage";
-import InactivePatientsPage from "@/pages/InactivePatientsPage";
+import EstudianteLayout from "@/components/EstudianteLayout";
+import EstudianteListPage from "@/pages/EstudianteListPage";
+import EstudianteDetailPage from "@/pages/EstudianteDetailPage";
+import InactiveEstudiantesPage from "@/pages/InactiveEstudiantesPage";
 import NotFound from "./pages/NotFound.tsx";
 import PlanRulesPage from "@/pages/PlanRulesPage";
 import CheckInPage from "@/pages/CheckInPage";
@@ -18,13 +18,13 @@ import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import VerifyEmailPage from "@/pages/VerifyEmailPage";
 import ActivateAccountPage from "@/pages/ActivateAccountPage";
-import PatientHomePage from "@/pages/patient/PatientHomePage";
-import PatientCheckInPage from "@/pages/patient/PatientCheckInPage";
-import PatientHistoryPage from "@/pages/patient/PatientHistoryPage";
-import PatientPlanPage from "@/pages/patient/PatientPlanPage";
-import PatientConsentsPage from "@/pages/patient/PatientConsentsPage";
+import EstudianteHomePage from "@/pages/estudiante/EstudianteHomePage";
+import EstudianteCheckInPage from "@/pages/estudiante/EstudianteCheckInPage";
+import EstudianteHistoryPage from "@/pages/estudiante/EstudianteHistoryPage";
+import EstudiantePlanPage from "@/pages/estudiante/EstudiantePlanPage";
+import EstudianteConsentsPage from "@/pages/estudiante/EstudianteConsentsPage";
 import { authService } from "@/services/authService";
-import PatientProgressReportPage from "@/pages/patient/PatientProgressReportPage";
+import EstudianteProgressReportPage from "@/pages/estudiante/EstudianteProgressReportPage";
 import ProgressReportPage from "@/pages/ProgressReportPage";
 import AlertsPage from "@/pages/AlertsPage";
 import DashboardPage from "@/pages/DashboardPage";
@@ -36,7 +36,7 @@ const ProtectedRoute = ({
   allowedRole,
 }: {
   children: React.ReactNode;
-  allowedRole: "PROFESSIONAL" | "PATIENT";
+  allowedRole: "ORIENTADOR" | "ESTUDIANTE";
 }) => {
   const user = authService.getCurrentUser();
   if (!user) return <Navigate to="/login" replace />;
@@ -56,48 +56,48 @@ const App = () => (
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/activate" element={<ActivateAccountPage />} />
-          <Route path="/patient/progress-report" element={<PatientProgressReportPage />} />
+          <Route path="/estudiante/progress-report" element={<EstudianteProgressReportPage />} />
           <Route path="/alerts" element={<AlertsPage />} />
           <Route path="/activate" element={<ActivateAccountPage />} />
 
-          {/* Rutas del PACIENTE */}
+          {/* Rutas del ESTUDIANTE */}
           <Route
-            path="/patient/*"
+            path="/estudiante/*"
             element={
-              <ProtectedRoute allowedRole="PATIENT">
-                <PatientLayout>
+              <ProtectedRoute allowedRole="ESTUDIANTE">
+                <EstudianteLayout>
                   <Routes>
                     <Route index element={<Navigate to="home" replace />} />
-                    <Route path="home" element={<PatientHomePage />} />
-                    <Route path="check-in" element={<PatientCheckInPage />} />
-                    <Route path="history" element={<PatientHistoryPage />} />
-                    <Route path="plan" element={<PatientPlanPage />} />
-                    <Route path="consents" element={<PatientConsentsPage />} />
+                    <Route path="home" element={<EstudianteHomePage />} />
+                    <Route path="check-in" element={<EstudianteCheckInPage />} />
+                    <Route path="history" element={<EstudianteHistoryPage />} />
+                    <Route path="plan" element={<EstudiantePlanPage />} />
+                    <Route path="consents" element={<EstudianteConsentsPage />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
-                </PatientLayout>
+                </EstudianteLayout>
               </ProtectedRoute>
             }
           />
 
-          {/* Rutas del PROFESIONAL */}
+          {/* Rutas del ORIENTADOR */}
           <Route
             path="/*"
             element={
-              <ProtectedRoute allowedRole="PROFESSIONAL">
+              <ProtectedRoute allowedRole="ORIENTADOR">
                 <AppLayout>
                   <Routes>
                     <Route path="/" element={<Navigate to="/dashboard" replace />} />
                     <Route path="/dashboard" element={<DashboardPage />} />
-                    <Route path="/patients" element={<PatientListPage />} />
-                    <Route path="/patients/inactive" element={<InactivePatientsPage />} />
-                    <Route path="/patients/:id" element={<PatientDetailPage />} />
-                    <Route path="/patients/:id/plans/:planId/rules" element={<PlanRulesPage />} />
-                    <Route path="/patients/:id/check-in" element={<CheckInPage />} />
-                    <Route path="/patients/:id/check-in/history" element={<CheckInHistoryPage />} />
+                    <Route path="/estudiantes" element={<EstudianteListPage />} />
+                    <Route path="/estudiantes/inactive" element={<InactiveEstudiantesPage />} />
+                    <Route path="/estudiantes/:id" element={<EstudianteDetailPage />} />
+                    <Route path="/estudiantes/:id/plans/:planId/rules" element={<PlanRulesPage />} />
+                    <Route path="/estudiantes/:id/check-in" element={<CheckInPage />} />
+                    <Route path="/estudiantes/:id/check-in/history" element={<CheckInHistoryPage />} />
                     <Route path="/risk-level" element={<RiskLevelPanelPage />} />
-                    <Route path="/patients/:id/adherence" element={<AdherencePage />} />
-                    <Route path="/patients/:id/progress-report" element={<ProgressReportPage />} />
+                    <Route path="/estudiantes/:id/adherence" element={<AdherencePage />} />
+                    <Route path="/estudiantes/:id/progress-report" element={<ProgressReportPage />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </AppLayout>

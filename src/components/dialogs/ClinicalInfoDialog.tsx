@@ -19,11 +19,11 @@ const healthStatuses: { value: HealthStatus; label: string }[] = [
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  patientId: number;
+  estudianteId: number;
   existing: ClinicalInfo | null;
 }
 
-export function ClinicalInfoDialog({ open, onOpenChange, patientId, existing }: Props) {
+export function ClinicalInfoDialog({ open, onOpenChange, estudianteId, existing }: Props) {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({
     mainCondition: "",
@@ -53,12 +53,12 @@ export function ClinicalInfoDialog({ open, onOpenChange, patientId, existing }: 
   const mutation = useMutation({
     mutationFn: () =>
       existing
-        ? clinicalInfoService.update(patientId, form)
-        : clinicalInfoService.register(patientId, form),
+        ? clinicalInfoService.update(estudianteId, form)
+        : clinicalInfoService.register(estudianteId, form),
     onSuccess: () => {
       toast.success(existing ? "Info clínica actualizada" : "Info clínica registrada");
-      queryClient.invalidateQueries({ queryKey: ["clinicalInfo", patientId] });
-      queryClient.invalidateQueries({ queryKey: ["patient", patientId] });
+      queryClient.invalidateQueries({ queryKey: ["clinicalInfo", estudianteId] });
+      queryClient.invalidateQueries({ queryKey: ["estudiante", estudianteId] });
       onOpenChange(false);
     },
   });

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { patientService } from "@/services/patientService";
+import { estudianteService } from "@/services/estudianteService";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/StatusBadge";
-import { ReactivatePatientDialog } from "@/components/dialogs/ReactivatePatientDialog";
+import { ReactivateEstudianteDialog } from "@/components/dialogs/ReactivateEstudianteDialog";
 import { Eye, UserCheck, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -14,20 +14,20 @@ const reasonLabels: Record<string, string> = {
   ABANDONO_PERDIDA_SEGUIMIENTO: "Abandono / Pérdida de seguimiento",
 };
 
-export default function InactivePatientsPage() {
+export default function InactiveEstudiantesPage() {
   const navigate = useNavigate();
-  const [reactivate, setReactivate] = useState<{ open: boolean; patientId: number | null }>({ open: false, patientId: null });
+  const [reactivate, setReactivate] = useState<{ open: boolean; estudianteId: number | null }>({ open: false, estudianteId: null });
 
-  const { data: patients = [], isLoading } = useQuery({
-    queryKey: ["patients", "inactive"],
-    queryFn: () => patientService.listInactive(),
+  const { data: estudiantes = [], isLoading } = useQuery({
+    queryKey: ["estudiantes", "inactive"],
+    queryFn: () => estudianteService.listInactive(),
   });
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-foreground">Pacientes Inactivos</h2>
-        <p className="text-muted-foreground">Pacientes que han sido desactivados</p>
+        <h2 className="text-2xl font-bold text-foreground">Estudiantes Inactivos</h2>
+        <p className="text-muted-foreground">Estudiantes que han sido desactivados</p>
       </div>
 
       <div className="rounded-lg border bg-card">
@@ -49,14 +49,14 @@ export default function InactivePatientsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {patients.length === 0 ? (
+              {estudiantes.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                    No hay pacientes inactivos
+                    No hay estudiantes inactivos
                   </TableCell>
                 </TableRow>
               ) : (
-                patients.map((p) => (
+                estudiantes.map((p) => (
                   <TableRow key={p.id}>
                     <TableCell className="font-medium">{p.name} {p.lastName}</TableCell>
                     <TableCell>{p.identityDocument}</TableCell>
@@ -66,10 +66,10 @@ export default function InactivePatientsPage() {
                     <TableCell>{p.deactivatedAt ? format(new Date(p.deactivatedAt), "dd/MM/yyyy") : "-"}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => navigate(`/patients/${p.id}`)}>
+                        <Button variant="ghost" size="icon" onClick={() => navigate(`/estudiantes/${p.id}`)}>
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => setReactivate({ open: true, patientId: p.id })}>
+                        <Button variant="ghost" size="icon" onClick={() => setReactivate({ open: true, estudianteId: p.id })}>
                           <UserCheck className="h-4 w-4" />
                         </Button>
                       </div>
@@ -82,10 +82,10 @@ export default function InactivePatientsPage() {
         )}
       </div>
 
-      <ReactivatePatientDialog
+      <ReactivateEstudianteDialog
         open={reactivate.open}
         onOpenChange={(open) => setReactivate({ ...reactivate, open })}
-        patientId={reactivate.patientId}
+        estudianteId={reactivate.estudianteId}
       />
     </div>
   );

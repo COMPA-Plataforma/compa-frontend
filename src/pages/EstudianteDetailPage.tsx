@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { patientService } from "@/services/patientService";
+import { estudianteService } from "@/services/estudianteService";
 import { clinicalInfoService } from "@/services/clinicalInfoService";
 import { habitPlanService } from "@/services/habitPlanService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,9 +21,9 @@ import { RiskLevelSection } from "@/components/risk-level/RiskLevelSection";
 import { consentService } from "@/services/consentService";
 import { checkInService } from "@/services/checkInService";
 
-export default function PatientDetailPage() {
+export default function EstudianteDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const patientId = Number(id);
+  const estudianteId = Number(id);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -34,62 +34,62 @@ export default function PatientDetailPage() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [expandedPlans, setExpandedPlans] = useState<Set<number>>(new Set());
 
-  const { data: patient, isLoading: patientLoading } = useQuery({
-    queryKey: ["patient", patientId],
-    queryFn: () => patientService.getById(patientId),
-    enabled: !!id && !isNaN(patientId),
+  const { data: estudiante, isLoading: estudianteLoading } = useQuery({
+    queryKey: ["estudiante", estudianteId],
+    queryFn: () => estudianteService.getById(estudianteId),
+    enabled: !!id && !isNaN(estudianteId),
   });
 
   const { data: clinicalInfo, isLoading: clinicalLoading } = useQuery({
-    queryKey: ["clinicalInfo", patientId],
-    queryFn: () => clinicalInfoService.get(patientId).catch(() => null),
-    enabled: !!id && !isNaN(patientId),
+    queryKey: ["clinicalInfo", estudianteId],
+    queryFn: () => clinicalInfoService.get(estudianteId).catch(() => null),
+    enabled: !!id && !isNaN(estudianteId),
   });
 
   const { data: healthHistory = [] } = useQuery({
-    queryKey: ["healthHistory", patientId],
-    queryFn: () => clinicalInfoService.getHistory(patientId).catch(() => []),
+    queryKey: ["healthHistory", estudianteId],
+    queryFn: () => clinicalInfoService.getHistory(estudianteId).catch(() => []),
     enabled: historyOpen,
   });
 
   const { data: habitPlans = [], isLoading: plansLoading } = useQuery({
-    queryKey: ["habitPlans", patientId],
-    queryFn: () => habitPlanService.list(patientId),
-    enabled: !!id && !isNaN(patientId),
+    queryKey: ["habitPlans", estudianteId],
+    queryFn: () => habitPlanService.list(estudianteId),
+    enabled: !!id && !isNaN(estudianteId),
   });
 
   const { data: consents = [], isLoading: consentsLoading } = useQuery({
-    queryKey: ["consents", patientId],
-    queryFn: () => consentService.getByPatient(patientId),
-    enabled: !!id && !isNaN(patientId),
+    queryKey: ["consents", estudianteId],
+    queryFn: () => consentService.getByEstudiante(estudianteId),
+    enabled: !!id && !isNaN(estudianteId),
   });
 
   const { data: todayTasks = [], isLoading: tasksLoading } = useQuery({
-    queryKey: ["todayTasks", patientId],
-    queryFn: () => checkInService.getTasksForToday(patientId),
-    enabled: !!id && !isNaN(patientId),
+    queryKey: ["todayTasks", estudianteId],
+    queryFn: () => checkInService.getTasksForToday(estudianteId),
+    enabled: !!id && !isNaN(estudianteId),
   });
 
   const { data: todayCheckIn } = useQuery({
-    queryKey: ["todayCheckIn", patientId],
-    queryFn: () => checkInService.getToday(patientId).catch(() => null),
-    enabled: !!id && !isNaN(patientId),
+    queryKey: ["todayCheckIn", estudianteId],
+    queryFn: () => checkInService.getToday(estudianteId).catch(() => null),
+    enabled: !!id && !isNaN(estudianteId),
   });
 
   const deactivatePlan = useMutation({
-    mutationFn: (planId: number) => habitPlanService.deactivate(patientId, planId),
+    mutationFn: (planId: number) => habitPlanService.deactivate(estudianteId, planId),
     onSuccess: () => {
       toast.success("Plan desactivado");
-      queryClient.invalidateQueries({ queryKey: ["habitPlans", patientId] });
+      queryClient.invalidateQueries({ queryKey: ["habitPlans", estudianteId] });
     },
   });
 
   const deleteTask = useMutation({
     mutationFn: ({ planId, taskId }: { planId: number; taskId: number }) =>
-      habitPlanService.deleteTask(patientId, planId, taskId),
+      habitPlanService.deleteTask(estudianteId, planId, taskId),
     onSuccess: () => {
       toast.success("Tarea eliminada");
-      queryClient.invalidateQueries({ queryKey: ["habitPlans", patientId] });
+      queryClient.invalidateQueries({ queryKey: ["habitPlans", estudianteId] });
     },
   });
 
@@ -105,7 +105,7 @@ export default function PatientDetailPage() {
     });
   };
 
-  if (patientLoading) {
+  if (estudianteLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -113,8 +113,8 @@ export default function PatientDetailPage() {
     );
   }
 
-  if (!patient) {
-    return <p className="text-muted-foreground text-center py-20">Paciente no encontrado</p>;
+  if (!estudiante) {
+    return <p className="text-muted-foreground text-center py-20">Estudiante no encontrado</p>;
   }
 
   return (
@@ -127,34 +127,34 @@ export default function PatientDetailPage() {
         <CardHeader>
           <div className="flex items-start justify-between">
             <div>
-              <CardTitle className="text-2xl">{patient.name} {patient.lastName}</CardTitle>
+              <CardTitle className="text-2xl">{estudiante.name} {estudiante.lastName}</CardTitle>
               <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1"><FileText className="h-3.5 w-3.5" /> {patient.identityDocument}</span>
-                <span className="flex items-center gap-1"><Mail className="h-3.5 w-3.5" /> {patient.email}</span>
-                <span className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> {patient.phoneNumber}</span>
-                <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {format(new Date(patient.createdAt), "dd/MM/yyyy")}</span>
+                <span className="flex items-center gap-1"><FileText className="h-3.5 w-3.5" /> {estudiante.identityDocument}</span>
+                <span className="flex items-center gap-1"><Mail className="h-3.5 w-3.5" /> {estudiante.email}</span>
+                <span className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> {estudiante.phoneNumber}</span>
+                <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {format(new Date(estudiante.createdAt), "dd/MM/yyyy")}</span>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Button onClick={() => navigate(`/patients/${patientId}/check-in`)} className="gap-2">
+              <Button onClick={() => navigate(`/estudiantes/${estudianteId}/check-in`)} className="gap-2">
                 <ClipboardCheck className="h-4 w-4" /> Check-in Diario
               </Button>
-              <Button variant="outline" onClick={() => navigate(`/patients/${patientId}/check-in/history`)} className="gap-2">
+              <Button variant="outline" onClick={() => navigate(`/estudiantes/${estudianteId}/check-in/history`)} className="gap-2">
                 <History className="h-4 w-4" /> Historial
               </Button>
-              <Button variant="outline" onClick={() => navigate(`/patients/${patientId}/adherence`)} className="gap-2">
+              <Button variant="outline" onClick={() => navigate(`/estudiantes/${estudianteId}/adherence`)} className="gap-2">
                 <Activity className="h-4 w-4" /> Métricas
               </Button>
-              <Button variant="outline" onClick={() => navigate(`/patients/${patientId}/progress-report`)} className="gap-2">
+              <Button variant="outline" onClick={() => navigate(`/estudiantes/${estudianteId}/progress-report`)} className="gap-2">
                 <FileText className="h-4 w-4" /> Reporte de Progreso
               </Button>
-              <StatusBadge status={patient.status} />
+              <StatusBadge status={estudiante.status} />
             </div>
           </div>
         </CardHeader>
       </Card>
 
-      <RiskLevelSection patientId={patientId} />
+      <RiskLevelSection estudianteId={estudianteId} />
 
       <Tabs defaultValue="clinical">
         <TabsList>
@@ -235,8 +235,8 @@ export default function PatientDetailPage() {
               </CardContent>
             </Card>
           )}
-          <ClinicalInfoDialog open={clinicalDialog} onOpenChange={setClinicalDialog} patientId={patientId} existing={clinicalInfo ?? null} />
-          <UpdateHealthStatusDialog open={healthStatusDialog} onOpenChange={setHealthStatusDialog} patientId={patientId} />
+          <ClinicalInfoDialog open={clinicalDialog} onOpenChange={setClinicalDialog} estudianteId={estudianteId} existing={clinicalInfo ?? null} />
+          <UpdateHealthStatusDialog open={healthStatusDialog} onOpenChange={setHealthStatusDialog} estudianteId={estudianteId} />
         </TabsContent>
 
         {/* ── Planes de Hábitos ── */}
@@ -285,7 +285,7 @@ export default function PatientDetailPage() {
                         <Plus className="mr-1 h-3.5 w-3.5" /> Agregar Tarea
                       </Button>
                       <Button variant="outline" size="sm"
-                        onClick={() => navigate(`/patients/${patientId}/plans/${plan.id}/rules`)}>
+                        onClick={() => navigate(`/estudiantes/${estudianteId}/plans/${plan.id}/rules`)}>
                         <Activity className="mr-1 h-3.5 w-3.5" /> Ver Reglas
                       </Button>
                     </div>
@@ -334,11 +334,11 @@ export default function PatientDetailPage() {
               </Card>
             ))
           )}
-          <CreateHabitPlanDialog open={habitPlanDialog} onOpenChange={setHabitPlanDialog} patientId={patientId} />
+          <CreateHabitPlanDialog open={habitPlanDialog} onOpenChange={setHabitPlanDialog} estudianteId={estudianteId} />
           <AddTaskDialog
             open={addTaskDialog.open}
             onOpenChange={(open) => setAddTaskDialog({ ...addTaskDialog, open })}
-            patientId={patientId}
+            estudianteId={estudianteId}
             planId={addTaskDialog.planId}
           />
         </TabsContent>
@@ -370,7 +370,7 @@ export default function PatientDetailPage() {
                       </span>
                     ) : (
                       <span className="text-sm text-yellow-600 font-medium">
-                        ⏳ Pendiente de aceptación del paciente
+                        ⏳ Pendiente de aceptación del estudiante
                       </span>
                     )}
                   </div>

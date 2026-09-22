@@ -51,12 +51,12 @@ function formatShortDate(dateStr: string) {
 }
 
 interface Props {
-  overridePatientId?: number;
+  overrideEstudianteId?: number;
 }
 
 export default function ProgressReportPage(props: Props = {}) {
   const { id } = useParams<{ id: string }>();
-  const patientId = props.overridePatientId ?? Number(id);
+  const estudianteId = props.overrideEstudianteId ?? Number(id);
   const reportRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
   const currentUser = authService.getCurrentUser();
@@ -65,14 +65,14 @@ export default function ProgressReportPage(props: Props = {}) {
   const [showConclusionForm, setShowConclusionForm] = useState(false);
 
   const { data: report, isLoading, error } = useQuery<ProgressReport>({
-    queryKey: ["progress-report", patientId],
-    queryFn: () => progressReportService.getReport(patientId),
+    queryKey: ["progress-report", estudianteId],
+    queryFn: () => progressReportService.getReport(estudianteId),
   });
 
   const addConclusionMutation = useMutation({
-    mutationFn: () => progressReportService.addConclusion(patientId, newConclusion, currentUser!.id),
+    mutationFn: () => progressReportService.addConclusion(estudianteId, newConclusion, currentUser!.id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["progress-report", patientId] });
+      queryClient.invalidateQueries({ queryKey: ["progress-report", estudianteId] });
       setNewConclusion("");
       setShowConclusionForm(false);
     },
@@ -91,7 +91,7 @@ export default function ProgressReportPage(props: Props = {}) {
   if (error || !report) {
     return (
       <div style={{ padding: "2rem", textAlign: "center", color: "#ef4444" }}>
-        Error cargando el reporte. Verifica que el paciente tenga datos registrados.
+        Error cargando el reporte. Verifica que el estudiante tenga datos registrados.
       </div>
     );
   }
@@ -160,10 +160,10 @@ export default function ProgressReportPage(props: Props = {}) {
                   <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
                 </svg>
               </div>
-              <span style={{ fontSize: "1rem", fontWeight: 600 }}>LifeTracker Wellness</span>
+              <span style={{ fontSize: "1rem", fontWeight: 600 }}>COMPA - Acompañamiento estudiantil</span>
             </div>
             <p style={{ margin: 0, fontSize: "0.8rem", color: "hsl(199, 30%, 70%)" }}>
-              Terapeuta: <strong style={{ color: "white" }}>{report.therapistFullName}</strong>
+              Orientador: <strong style={{ color: "white" }}>{report.orientadorFullName}</strong>
             </p>
           </div>
           <div style={{ textAlign: "right" }}>
@@ -172,11 +172,11 @@ export default function ProgressReportPage(props: Props = {}) {
           </div>
         </div>
 
-        {/* Nombre paciente */}
+        {/* Nombre estudiante */}
         <div style={{ background: "hsl(199, 89%, 24%)", color: "white", padding: "1rem 2rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
-            <p style={{ margin: "0 0 0.2rem", fontSize: "0.75rem", color: "hsl(199, 40%, 70%)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Paciente</p>
-            <p style={{ margin: 0, fontSize: "1.25rem", fontWeight: 600 }}>{report.patientFullName}</p>
+            <p style={{ margin: "0 0 0.2rem", fontSize: "0.75rem", color: "hsl(199, 40%, 70%)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Estudiante</p>
+            <p style={{ margin: 0, fontSize: "1.25rem", fontWeight: 600 }}>{report.estudianteFullName}</p>
           </div>
           <div style={{ textAlign: "right" }}>
             <p style={{ margin: "0 0 0.2rem", fontSize: "0.75rem", color: "hsl(199, 40%, 70%)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Veces en riesgo alto</p>
@@ -295,9 +295,9 @@ export default function ProgressReportPage(props: Props = {}) {
           <div style={{ background: "hsl(210, 20%, 98%)", borderRadius: "10px", padding: "1.25rem", border: "1px solid hsl(214, 20%, 90%)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
               <h3 style={{ margin: 0, fontSize: "0.85rem", fontWeight: 600, color: "#374151", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                Conclusiones del terapeuta
+                Conclusiones del orientador
               </h3>
-              {!props.overridePatientId && (
+              {!props.overrideEstudianteId && (
                 <button
                   className="no-print"
                   onClick={() => setShowConclusionForm(!showConclusionForm)}
@@ -345,7 +345,7 @@ export default function ProgressReportPage(props: Props = {}) {
                 {report.conclusions.map((c) => (
                   <div key={c.id} style={{ padding: "0.875rem 1rem", background: "white", borderRadius: 8, border: "1px solid hsl(214,20%,88%)", borderLeft: "3px solid hsl(199, 89%, 38%)" }}>
                     <p style={{ margin: "0 0 0.5rem", fontSize: "0.9rem", color: "#374151", lineHeight: 1.6 }}>{c.content}</p>
-                    <p style={{ margin: 0, fontSize: "0.75rem", color: "#9ca3af" }}>{c.therapistName} · {formatDate(c.createdAt)}</p>
+                    <p style={{ margin: 0, fontSize: "0.75rem", color: "#9ca3af" }}>{c.orientadorName} · {formatDate(c.createdAt)}</p>
                   </div>
                 ))}
               </div>

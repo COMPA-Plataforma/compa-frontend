@@ -57,7 +57,7 @@ export default function RiskLevelPanelPage() {
   const evaluateAll = useMutation({
     mutationFn: () => riskLevelService.evaluateAll(),
     onSuccess: () => {
-      toast.success("Evaluación de todos los pacientes completada");
+      toast.success("Evaluación de todos los estudiantes completada");
       queryClient.invalidateQueries({ queryKey: ["riskLevelAll"] });
     },
   });
@@ -84,7 +84,7 @@ export default function RiskLevelPanelPage() {
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">Panel de Riesgo</h1>
             <p className="text-sm text-muted-foreground">
-              Visualiza a tus pacientes agrupados por nivel de riesgo.
+              Visualiza a tus estudiantes agrupados por nivel de riesgo.
             </p>
           </div>
         </div>
@@ -111,7 +111,7 @@ export default function RiskLevelPanelPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           {COLUMNS.map((col) => {
-            const patients = grouped[col.level];
+            const estudiantes = grouped[col.level];
             return (
               <Card key={col.level} className={cn("border-t-4", col.accent)}>
                 <CardHeader>
@@ -131,22 +131,22 @@ export default function RiskLevelPanelPage() {
                       <Skeleton className="h-16 w-full" />
                       <Skeleton className="h-16 w-full" />
                     </>
-                  ) : patients.length === 0 ? (
+                  ) : estudiantes.length === 0 ? (
                     <p className="py-6 text-center text-sm text-muted-foreground">
-                      Sin pacientes en este nivel
+                      Sin estudiantes en este nivel
                     </p>
                   ) : (
-                    patients.map((p) => (
+                    estudiantes.map((p) => (
                       <button
-                        key={p.patientId}
+                        key={p.estudianteId}
                         type="button"
-                        onClick={() => navigate(`/patients/${p.patientId}`)}
+                        onClick={() => navigate(`/estudiantes/${p.estudianteId}`)}
                         className="w-full rounded-lg border bg-card p-3 text-left transition-colors hover:bg-accent"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
                             <p className="truncate font-medium text-foreground">
-                              {p.patientName}
+                              {p.estudianteName}
                             </p>
                             <p className="text-xs text-muted-foreground">
                               Última evaluación: {formatDate(p.evaluatedDate)}
