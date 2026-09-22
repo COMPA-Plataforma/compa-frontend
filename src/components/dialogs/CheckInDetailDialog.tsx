@@ -42,8 +42,16 @@ export function CheckInDetailDialog({ open, onOpenChange, estudianteId, checkInI
               <p className="text-sm text-muted-foreground capitalize">
                 {format(parseISO(detail.checkInDate), "EEEE d 'de' MMMM yyyy", { locale: es })}
               </p>
-              <p className="text-4xl">{detail.emotionalStateIcon}</p>
-              <p className="font-medium">{detail.emotionalStateLabel}</p>
+                            {detail.emotionalStateIcon ? (
+                <>
+                  <p className="text-4xl">{detail.emotionalStateIcon}</p>
+                  <p className="font-medium">{detail.emotionalStateLabel}</p>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground italic">
+                  Aún sin estado de ánimo registrado
+                </p>
+              )}
             </div>
 
             <div className="space-y-3">

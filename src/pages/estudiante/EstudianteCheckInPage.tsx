@@ -80,13 +80,13 @@ export default function EstudianteCheckInPage() {
     onError: () => toast.error("No se pudo actualizar el check-in"),
   });
 
-  // Detectar al inicio si ya hay check-in hoy
+  // Detectar al inicio si ya hay check-in completo hoy (requiere registro Y emotionalState)
   useQuery({
     queryKey: ["me-today-check"],
     queryFn: async () => {
       try {
         const today = await estudianteMeService.getTodayCheckIn();
-        if (today && step === "emotion" && !isEditing) {
+        if (today && today.emotionalState && step === "emotion" && !isEditing) {
           setExistingCheckIn(today);
           setStep("already-done");
         }
@@ -323,7 +323,7 @@ export default function EstudianteCheckInPage() {
             <h2 className="text-xl font-bold text-foreground">
               Ya completaste tu registro de hoy
             </h2>
-            {existingCheckIn && EMOTION_MAP[existingCheckIn.emotionalState] && (
+            {existingCheckIn && existingCheckIn.emotionalState && EMOTION_MAP[existingCheckIn.emotionalState] && (
               <p className="text-muted-foreground">
                 Estado emocional:{" "}
                 <span className="text-2xl">

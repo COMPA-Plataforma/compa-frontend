@@ -28,7 +28,7 @@ export interface ClosingResponse {
 
 export interface TodayCheckIn {
   id: number;
-  emotionalState: string;
+  emotionalState: string | null;
   checkInDate: string;
   tasks: TaskResponse[];
 }
@@ -68,9 +68,9 @@ export interface CheckInDetailTask {
 export interface CheckInDetail {
   id: number;
   checkInDate: string;
-  emotionalState: string;
-  emotionalStateIcon: string;
-  emotionalStateLabel: string;
+  emotionalState: string | null;
+  emotionalStateIcon: string | null;
+  emotionalStateLabel: string | null;
   createdAt: string;
   updatedAt: string;
   tasks: CheckInDetailTask[];

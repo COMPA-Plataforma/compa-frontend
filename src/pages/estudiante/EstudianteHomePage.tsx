@@ -33,8 +33,9 @@ export default function EstudianteHomePage() {
     retry: false,
   });
 
-  const alreadyCheckedIn = !!today;
-  const emotion = today ? EMOTION_MAP[today.emotionalState] : null;
+  // Fix aplicado: requiere que exista el registro y que tenga un emotionalState válido
+  const alreadyCheckedIn = !!today && !!today.emotionalState;
+  const emotion = today?.emotionalState ? EMOTION_MAP[today.emotionalState] : null;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">

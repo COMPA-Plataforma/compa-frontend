@@ -107,7 +107,9 @@ export default function EstudianteHistoryPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-3 p-3 rounded-lg bg-muted">
                 <span className="text-3xl">
-                  {EMOTION_MAP[detail.emotionalState]?.emoji ?? detail.emotionalStateIcon}
+                  {detail.emotionalState
+                    ? EMOTION_MAP[detail.emotionalState]?.emoji ?? detail.emotionalStateIcon
+                    : "🕓"}
                 </span>
                 <div>
                   <p className="text-xs text-muted-foreground">
@@ -116,7 +118,9 @@ export default function EstudianteHistoryPage() {
                     })}
                   </p>
                   <p className="font-medium">
-                    {EMOTION_MAP[detail.emotionalState]?.label ?? detail.emotionalStateLabel}
+                    {detail.emotionalState
+                      ? EMOTION_MAP[detail.emotionalState]?.label ?? detail.emotionalStateLabel
+                      : "Aún sin estado de ánimo registrado"}
                   </p>
                 </div>
               </div>

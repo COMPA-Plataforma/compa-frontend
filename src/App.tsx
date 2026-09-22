@@ -28,6 +28,7 @@ import EstudianteProgressReportPage from "@/pages/estudiante/EstudianteProgressR
 import ProgressReportPage from "@/pages/ProgressReportPage";
 import AlertsPage from "@/pages/AlertsPage";
 import DashboardPage from "@/pages/DashboardPage";
+import CompleteTaskPage from "@/pages/CompleteTaskPage";
 
 const queryClient = new QueryClient();
 
@@ -98,7 +99,9 @@ const App = () => (
                     <Route path="/risk-level" element={<RiskLevelPanelPage />} />
                     <Route path="/estudiantes/:id/adherence" element={<AdherencePage />} />
                     <Route path="/estudiantes/:id/progress-report" element={<ProgressReportPage />} />
-                    <Route path="*" element={<NotFound />} />
+                    <Route path="/alerts" element={<AlertsPage />} />
+          <Route path="/notifications/complete-task" element={<CompleteTaskPage />} />
+          
                   </Routes>
                 </AppLayout>
               </ProtectedRoute>

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Home, CheckCircle2, Calendar, ClipboardList, LogOut, FileText, BarChart2, Moon, Sun } from "lucide-react";
 import { useDarkMode } from "@/hooks/useDarkMode";
+import { NotificationBell } from "@/components/NotificationBell";
 
 const navItems = [
   { to: "/estudiante/home", label: "Inicio", icon: Home },
@@ -36,6 +37,7 @@ export default function EstudianteLayout({ children }: { children: React.ReactNo
           )}
         </div>
         <div className="flex items-center gap-1">
+          <NotificationBell />
           <NavLink
             to="/estudiante/consents"
             className={({ isActive }) =>
