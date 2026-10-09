@@ -151,3 +151,41 @@ export interface RiskLevelHistoryEntry {
   evaluatedDate: string;
   createdAt: string;
 }
+
+// ── Atención (anamnesis) ──
+export interface MotivoItem {
+  codigo: string;
+  nombre: string;
+}
+
+export interface Atencion {
+  id: number;
+  estudianteId: number;
+  orientadorId: number | null;
+  orientadorNombre: string | null;
+  anamnesis: string;
+  motivos: MotivoItem[];
+  motivoOtro: string | null;
+  impresionDiagnostica: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AtencionVersion {
+  numero: number;
+  fecha: string;
+  autorId: number;
+  autorNombre: string;
+  anamnesis: string;
+  motivos: MotivoItem[];
+  motivoOtro: string | null;
+  impresionDiagnostica: string | null;
+}
+
+export interface AtencionPayload {
+  anamnesis: string;
+  motivos: string[];
+  motivoOtro: string;
+  impresionDiagnostica: string;
+}
