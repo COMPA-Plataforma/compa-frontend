@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { RiskLevelSection } from "@/components/risk-level/RiskLevelSection";
+import { AtencionSection } from "@/components/atencion/AtencionSection";
 import { consentService } from "@/services/consentService";
 import { checkInService } from "@/services/checkInService";
 
@@ -125,17 +126,20 @@ export default function EstudianteDetailPage() {
 
       <Card>
         <CardHeader>
-          <div className="flex items-start justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
             <div>
-              <CardTitle className="text-2xl">{estudiante.name} {estudiante.lastName}</CardTitle>
-              <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-3">
+                <CardTitle className="text-2xl">{estudiante.name} {estudiante.lastName}</CardTitle>
+                <StatusBadge status={estudiante.status} />
+              </div>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1"><FileText className="h-3.5 w-3.5" /> {estudiante.identityDocument}</span>
                 <span className="flex items-center gap-1"><Mail className="h-3.5 w-3.5" /> {estudiante.email}</span>
                 <span className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> {estudiante.phoneNumber}</span>
                 <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {format(new Date(estudiante.createdAt), "dd/MM/yyyy")}</span>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <Button onClick={() => navigate(`/estudiantes/${estudianteId}/check-in`)} className="gap-2">
                 <ClipboardCheck className="h-4 w-4" /> Check-in Diario
               </Button>
@@ -148,7 +152,6 @@ export default function EstudianteDetailPage() {
               <Button variant="outline" onClick={() => navigate(`/estudiantes/${estudianteId}/progress-report`)} className="gap-2">
                 <FileText className="h-4 w-4" /> Reporte de Progreso
               </Button>
-              <StatusBadge status={estudiante.status} />
             </div>
           </div>
         </CardHeader>
@@ -159,6 +162,7 @@ export default function EstudianteDetailPage() {
       <Tabs defaultValue="clinical">
         <TabsList>
           <TabsTrigger value="clinical">Información Clínica</TabsTrigger>
+          <TabsTrigger value="atencion">Atención</TabsTrigger>
           <TabsTrigger value="habits">Planes de Hábitos</TabsTrigger>
           <TabsTrigger value="consents">Consentimientos</TabsTrigger>
           <TabsTrigger value="today-tasks">Tareas de Hoy</TabsTrigger>
@@ -237,6 +241,11 @@ export default function EstudianteDetailPage() {
           )}
           <ClinicalInfoDialog open={clinicalDialog} onOpenChange={setClinicalDialog} estudianteId={estudianteId} existing={clinicalInfo ?? null} />
           <UpdateHealthStatusDialog open={healthStatusDialog} onOpenChange={setHealthStatusDialog} estudianteId={estudianteId} />
+        </TabsContent>
+
+        {/* ── Atención (anamnesis) ── */}
+        <TabsContent value="atencion" className="space-y-4 mt-4">
+          <AtencionSection estudianteId={estudianteId} />
         </TabsContent>
 
         {/* ── Planes de Hábitos ── */}
