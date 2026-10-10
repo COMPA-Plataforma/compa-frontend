@@ -5,19 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ClipboardList, Calendar, Printer, CheckSquare, Repeat } from "lucide-react";
 import { estudianteMeService } from "@/services/estudianteMeService";
 import { authService } from "@/services/authService";
-import type { HabitTask } from "@/types";
-
-// Frecuencia de una actividad: veces por semana y/o días específicos. Vacío si no tiene.
-const frecuencia = (task: HabitTask) => {
-  const partes: string[] = [];
-  if (task.weeklyGoal) {
-    partes.push(`${task.weeklyGoal} ${task.weeklyGoal === 1 ? "vez" : "veces"} por semana`);
-  }
-  if (task.specificDays && task.specificDays.length > 0) {
-    partes.push(`Días: ${task.specificDays.join(", ")}`);
-  }
-  return partes.join(" · ");
-};
+import { frecuenciaTexto } from "@/lib/habitos";
 
 export default function EstudiantePlanPage() {
   const currentUser = authService.getCurrentUser();
@@ -171,7 +159,7 @@ export default function EstudiantePlanPage() {
                 Inicio: {formatDate(plan.startDate)}
               </span>
               {plan.endDate && <span>Fecha límite: {formatDate(plan.endDate)}</span>}
-              <span>Acordado el {formatDate(plan.createdAt)}</span>
+              <span>Acordado el {formatDate(plan.agreedDate ?? plan.createdAt)}</span>
             </div>
           </CardContent>
         </Card>
@@ -205,14 +193,20 @@ export default function EstudiantePlanPage() {
                           {task.description}
                         </p>
                       )}
-                      {frecuencia(task) && (
+                      {frecuenciaTexto(task) && (
                         <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1.5">
                           <Repeat className="h-3 w-3" />
-                          {frecuencia(task)}
+                          {frecuenciaTexto(task)}
+                        </p>
+                      )}
+                      {task.dueDate && (
+                        <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1.5">
+                          <Calendar className="h-3 w-3" />
+                          Fecha límite: {formatDate(task.dueDate)}
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground mt-1">
-                        Acordada el {formatDate(task.createdAt)}
+                        Acordada el {formatDate(task.agreedDate ?? task.createdAt)}
                       </p>
                     </div>
                   </div>

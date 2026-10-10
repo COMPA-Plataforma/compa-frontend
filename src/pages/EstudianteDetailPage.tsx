@@ -19,6 +19,10 @@ import { toast } from "sonner";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { RiskLevelSection } from "@/components/risk-level/RiskLevelSection";
 import { AtencionSection } from "@/components/atencion/AtencionSection";
+import { atencionService } from "@/services/atencionService";
+import { formatFecha } from "@/lib/dates";
+import { frecuenciaTexto } from "@/lib/habitos";
+import axios from "axios";
 import { consentService } from "@/services/consentService";
 import { checkInService } from "@/services/checkInService";
 
@@ -59,6 +63,25 @@ export default function EstudianteDetailPage() {
     enabled: !!id && !isNaN(estudianteId),
   });
 
+  // Misma consulta que AtencionSection (misma clave): sirve para saber si ya hay atención registrada,
+  // porque el plan solo se puede crear si la hay.
+  const { data: atencionResult, isLoading: atencionLoading } = useQuery<{ status: "ok" | "none" | "forbidden" }>({
+    queryKey: ["atencion", estudianteId],
+    queryFn: async () => {
+      try {
+        return { status: "ok", data: await atencionService.get(estudianteId) } as { status: "ok" };
+      } catch (e) {
+        if (axios.isAxiosError(e)) {
+          if (e.response?.status === 404) return { status: "none" };
+          if (e.response?.status === 403) return { status: "forbidden" };
+        }
+        throw e;
+      }
+    },
+    enabled: !!id && !isNaN(estudianteId),
+    retry: false,
+  });
+
   const { data: consents = [], isLoading: consentsLoading } = useQuery({
     queryKey: ["consents", estudianteId],
     queryFn: () => consentService.getByEstudiante(estudianteId),
@@ -93,6 +116,10 @@ export default function EstudianteDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["habitPlans", estudianteId] });
     },
   });
+
+  // El plan solo se puede crear con atención registrada y si no hay ya un plan activo
+  const sinAtencion = atencionResult?.status === "none";
+  const tienePlanActivo = habitPlans.some((p) => p.status === "ACTIVO");
 
   const togglePlan = (planId: number) => {
     setExpandedPlans((prev) => {
@@ -252,10 +279,23 @@ export default function EstudianteDetailPage() {
         <TabsContent value="habits" className="space-y-4 mt-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Planes de Hábitos</h3>
-            <Button onClick={() => setHabitPlanDialog(true)}>
+            <Button
+              onClick={() => setHabitPlanDialog(true)}
+              disabled={atencionLoading || plansLoading || sinAtencion || tienePlanActivo}
+            >
               <Plus className="mr-2 h-4 w-4" /> Nuevo Plan
             </Button>
           </div>
+          {sinAtencion && (
+            <p className="text-sm text-muted-foreground">
+              Para crear el plan primero registra la atención del estudiante (pestaña Atención).
+            </p>
+          )}
+          {!sinAtencion && tienePlanActivo && (
+            <p className="text-sm text-muted-foreground">
+              El estudiante ya tiene un plan activo. Desactívalo para crear uno nuevo.
+            </p>
+          )}
           {plansLoading ? (
             <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
           ) : habitPlans.length === 0 ? (
@@ -273,7 +313,9 @@ export default function EstudianteDetailPage() {
                       <CardTitle className="text-base">{plan.name}</CardTitle>
                       <p className="text-sm text-muted-foreground mt-1">{plan.description}</p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {format(new Date(plan.startDate), "dd/MM/yyyy")} — {format(new Date(plan.endDate), "dd/MM/yyyy")}
+                        {formatFecha(plan.startDate)}
+                        {plan.endDate ? ` — ${formatFecha(plan.endDate)}` : ""}
+                        {" · "}Acordado el {formatFecha(plan.agreedDate ?? plan.createdAt)}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -290,9 +332,11 @@ export default function EstudianteDetailPage() {
                           <XCircle className="mr-1 h-3.5 w-3.5" /> Desactivar Plan
                         </Button>
                       )}
-                      <Button variant="outline" size="sm" onClick={() => setAddTaskDialog({ open: true, planId: plan.id })}>
-                        <Plus className="mr-1 h-3.5 w-3.5" /> Agregar Tarea
-                      </Button>
+                      {plan.status === "ACTIVO" && (
+                        <Button variant="outline" size="sm" onClick={() => setAddTaskDialog({ open: true, planId: plan.id })}>
+                          <Plus className="mr-1 h-3.5 w-3.5" /> Agregar Tarea
+                        </Button>
+                      )}
                       <Button variant="outline" size="sm"
                         onClick={() => navigate(`/estudiantes/${estudianteId}/plans/${plan.id}/rules`)}>
                         <Activity className="mr-1 h-3.5 w-3.5" /> Ver Reglas
@@ -305,6 +349,8 @@ export default function EstudianteDetailPage() {
                             <TableHead>Tarea</TableHead>
                             <TableHead>Descripción</TableHead>
                             <TableHead>Prioridad</TableHead>
+                            <TableHead>Fecha límite / frecuencia</TableHead>
+                            <TableHead>Acordada</TableHead>
                             <TableHead className="text-right">Acciones</TableHead>
                           </TableRow>
                         </TableHeader>
@@ -321,6 +367,14 @@ export default function EstudianteDetailPage() {
                                 }`}>
                                   {task.priority ?? "—"}
                                 </span>
+                              </TableCell>
+                              <TableCell className="text-sm">
+                                {task.dueDate
+                                  ? `Hasta el ${formatFecha(task.dueDate)}`
+                                  : frecuenciaTexto(task) || "—"}
+                              </TableCell>
+                              <TableCell className="text-sm">
+                                {formatFecha(task.agreedDate ?? task.createdAt)}
                               </TableCell>
                               <TableCell className="text-right">
                                 <Button
