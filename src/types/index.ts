@@ -64,6 +64,8 @@ export interface HabitTask {
   mandatory?: boolean;
   weeklyGoal?: number | null;
   specificDays?: string[];
+  dueDate?: string | null;     // fecha límite (opcional)
+  agreedDate?: string | null;  // fecha de la sesión en que se acordó
   createdAt: string;
 }
 
@@ -72,10 +74,38 @@ export interface HabitPlan {
   name: string;
   description: string;
   startDate: string;
-  endDate: string;
+  endDate: string | null;
+  agreedDate?: string | null;  // fecha de la sesión en que se acordó el plan
   status: PlanStatus;
   createdAt: string;
   tasks: HabitTask[];
+}
+
+// Plan tal como lo ve el estudiante (solo lectura). La fecha límite puede no existir.
+export interface PlanEstudiante extends Omit<HabitPlan, "endDate"> {
+  endDate: string | null;
+}
+
+// Lo que se envía al backend por cada actividad (al crear el plan o al agregarla después)
+export interface HabitTaskPayload {
+  name: string;
+  description: string;
+  priority?: TaskPriority;
+  mandatory?: boolean;
+  weeklyGoal?: number;
+  specificDays?: string[];
+  dueDate?: string;      // yyyy-MM-dd
+  sessionDate?: string;  // yyyy-MM-dd; solo al agregar una actividad en una sesión posterior
+}
+
+// Lo que se envía para crear un plan: debe traer al menos una actividad
+export interface HabitPlanPayload {
+  name: string;
+  description: string;
+  startDate: string;     // yyyy-MM-dd
+  endDate?: string;      // yyyy-MM-dd
+  sessionDate: string;   // yyyy-MM-dd
+  tasks: HabitTaskPayload[];
 }
 
 export interface HealthStatusHistory {
