@@ -2,23 +2,41 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { ClipboardList, Calendar, Printer, CheckSquare } from "lucide-react";
+import { ClipboardList, Calendar, Printer, CheckSquare, Repeat } from "lucide-react";
 import { estudianteMeService } from "@/services/estudianteMeService";
 import { authService } from "@/services/authService";
+import type { HabitTask } from "@/types";
+
+// Frecuencia de una actividad: veces por semana y/o días específicos. Vacío si no tiene.
+const frecuencia = (task: HabitTask) => {
+  const partes: string[] = [];
+  if (task.weeklyGoal) {
+    partes.push(`${task.weeklyGoal} ${task.weeklyGoal === 1 ? "vez" : "veces"} por semana`);
+  }
+  if (task.specificDays && task.specificDays.length > 0) {
+    partes.push(`Días: ${task.specificDays.join(", ")}`);
+  }
+  return partes.join(" · ");
+};
 
 export default function EstudiantePlanPage() {
   const currentUser = authService.getCurrentUser();
 
+  // getActivePlan devuelve null si no hay plan activo; cualquier otro fallo llega como isError
   const { data: plan, isLoading, isError } = useQuery({
     queryKey: ["me-plan"],
-    queryFn: () => estudianteMeService.getActivePlan().catch(() => null),
+    queryFn: () => estudianteMeService.getActivePlan(),
     retry: false,
   });
 
-  const formatDate = (d: string) =>
-    new Date(d).toLocaleDateString("es-ES", {
+  // Las fechas sin hora (ej. 2026-10-09) se leen como fecha local; con new Date directo
+  // se correrían un día atrás por la zona horaria.
+  const formatDate = (d: string) => {
+    const date = /^\d{4}-\d{2}-\d{2}$/.test(d) ? new Date(`${d}T00:00:00`) : new Date(d);
+    return date.toLocaleDateString("es-ES", {
       day: "numeric", month: "long", year: "numeric",
     });
+  };
 
   const today = new Date().toLocaleDateString("es-ES", {
     day: "numeric", month: "long", year: "numeric",
@@ -34,7 +52,7 @@ export default function EstudiantePlanPage() {
     );
   }
 
-  if (isError || !plan) {
+  if (isError) {
     return (
       <div className="space-y-4">
         <h1 className="text-xl font-semibold tracking-tight">Mi plan</h1>
@@ -42,7 +60,23 @@ export default function EstudiantePlanPage() {
           <CardContent className="py-12 text-center space-y-3">
             <ClipboardList className="h-12 w-12 text-muted-foreground mx-auto" />
             <p className="text-sm text-muted-foreground">
-              Aún no tienes un plan asignado.
+              No pudimos cargar tu plan. Intenta de nuevo en un momento.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!plan) {
+    return (
+      <div className="space-y-4">
+        <h1 className="text-xl font-semibold tracking-tight">Mi plan</h1>
+        <Card>
+          <CardContent className="py-12 text-center space-y-3">
+            <ClipboardList className="h-12 w-12 text-muted-foreground mx-auto" />
+            <p className="text-sm text-muted-foreground">
+              Aún no tienes un plan de acompañamiento activo.
             </p>
           </CardContent>
         </Card>
@@ -131,11 +165,13 @@ export default function EstudiantePlanPage() {
             )}
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Calendar className="h-3.5 w-3.5" />
-              <span>
-                {formatDate(plan.startDate)} — {formatDate(plan.endDate)}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+              <span className="flex items-center gap-2">
+                <Calendar className="h-3.5 w-3.5" />
+                Inicio: {formatDate(plan.startDate)}
               </span>
+              {plan.endDate && <span>Fecha límite: {formatDate(plan.endDate)}</span>}
+              <span>Acordado el {formatDate(plan.createdAt)}</span>
             </div>
           </CardContent>
         </Card>
@@ -169,6 +205,15 @@ export default function EstudiantePlanPage() {
                           {task.description}
                         </p>
                       )}
+                      {frecuencia(task) && (
+                        <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1.5">
+                          <Repeat className="h-3 w-3" />
+                          {frecuencia(task)}
+                        </p>
+                      )}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Acordada el {formatDate(task.createdAt)}
+                      </p>
                     </div>
                   </div>
                 </CardContent>
