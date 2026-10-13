@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { RiskLevelSection } from "@/components/risk-level/RiskLevelSection";
 import { AtencionSection } from "@/components/atencion/AtencionSection";
+import { SeguimientoSection } from "@/components/seguimientos/SeguimientoSection";
 import { atencionService } from "@/services/atencionService";
 import { formatFecha } from "@/lib/dates";
 import { frecuenciaTexto } from "@/lib/habitos";
@@ -190,6 +191,7 @@ export default function EstudianteDetailPage() {
         <TabsList>
           <TabsTrigger value="clinical">Información Clínica</TabsTrigger>
           <TabsTrigger value="atencion">Atención</TabsTrigger>
+          <TabsTrigger value="seguimientos">Seguimientos</TabsTrigger>
           <TabsTrigger value="habits">Planes de Hábitos</TabsTrigger>
           <TabsTrigger value="consents">Consentimientos</TabsTrigger>
           <TabsTrigger value="today-tasks">Tareas de Hoy</TabsTrigger>
@@ -273,6 +275,11 @@ export default function EstudianteDetailPage() {
         {/* ── Atención (anamnesis) ── */}
         <TabsContent value="atencion" className="space-y-4 mt-4">
           <AtencionSection estudianteId={estudianteId} />
+        </TabsContent>
+
+        {/* ── Seguimientos de sesión ── */}
+        <TabsContent value="seguimientos" className="space-y-4 mt-4">
+          <SeguimientoSection estudianteId={estudianteId} />
         </TabsContent>
 
         {/* ── Planes de Hábitos ── */}

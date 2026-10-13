@@ -234,3 +234,38 @@ export interface AtencionPayload {
   motivoOtro: string;
   impresionDiagnostica: string;
 }
+
+// ── Seguimientos de sesión ──
+export interface Seguimiento {
+  id: number;
+  estudianteId: number;
+  fecha: string; // yyyy-MM-dd
+  descripcion: string;
+  autorId: number;
+  autorNombre: string;
+  faltoCita: boolean;
+  faltoPrimeraCita: boolean;
+  canceladaEstudiante: boolean;
+  canceladaDepartamento: boolean;
+  citaVirtual: boolean;
+  primeraVez: boolean;
+  cierreProceso: boolean;
+  remision: boolean;
+  anulado: boolean;
+  anuladoAt: string | null;
+  anuladoPorNombre: string | null;
+  createdAt: string;
+}
+
+export interface SeguimientoPayload {
+  fecha: string;
+  descripcion: string;
+  faltoCita: boolean;
+  faltoPrimeraCita: boolean;
+  canceladaEstudiante: boolean;
+  canceladaDepartamento: boolean;
+  citaVirtual: boolean;
+  primeraVez: boolean;
+  cierreProceso: boolean;
+  remision: boolean;
+}
