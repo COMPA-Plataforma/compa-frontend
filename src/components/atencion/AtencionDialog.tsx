@@ -8,11 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { atencionService } from "@/services/atencionService";
+import { CAMPOS_ANAMNESIS, MAX_CAMPO, type CampoAnamnesis } from "@/lib/atencion";
 import type { Atencion } from "@/types";
 
-const MAX_ANAMNESIS = 5000;
 const MAX_OTRO = 200;
-const MAX_IMPRESION = 300;
+
+type Textos = Record<CampoAnamnesis, string>;
+const textosVacios = (): Textos =>
+  Object.fromEntries(CAMPOS_ANAMNESIS.map((c) => [c.key, ""])) as Textos;
 
 interface Props {
   open: boolean;
@@ -21,12 +24,34 @@ interface Props {
   existing: Atencion | null;
 }
 
+// Campo de texto libre con contador de caracteres
+function CampoTexto({
+  id, label, required, rows, value, onChange,
+}: {
+  id: string;
+  label: string;
+  required: boolean;
+  rows: number;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>
+        {label}
+        {required ? " *" : <span className="text-muted-foreground font-normal"> (opcional)</span>}
+      </Label>
+      <Textarea id={id} rows={rows} maxLength={MAX_CAMPO} value={value} onChange={(e) => onChange(e.target.value)} />
+      <p className="text-xs text-muted-foreground text-right">{value.length}/{MAX_CAMPO}</p>
+    </div>
+  );
+}
+
 export function AtencionDialog({ open, onOpenChange, estudianteId, existing }: Props) {
   const queryClient = useQueryClient();
-  const [anamnesis, setAnamnesis] = useState("");
+  const [textos, setTextos] = useState<Textos>(textosVacios());
   const [motivos, setMotivos] = useState<string[]>([]);
   const [motivoOtro, setMotivoOtro] = useState("");
-  const [impresion, setImpresion] = useState("");
 
   const { data: catalogo = [] } = useQuery({
     queryKey: ["atencionMotivos"],
@@ -38,10 +63,13 @@ export function AtencionDialog({ open, onOpenChange, estudianteId, existing }: P
   // Cargar los valores actuales al abrir
   useEffect(() => {
     if (!open) return;
-    setAnamnesis(existing?.anamnesis ?? "");
+    setTextos(
+      Object.fromEntries(
+        CAMPOS_ANAMNESIS.map((c) => [c.key, existing?.[c.key] ?? ""])
+      ) as Textos
+    );
     setMotivos(existing?.motivos.map((m) => m.codigo) ?? []);
     setMotivoOtro(existing?.motivoOtro ?? "");
-    setImpresion(existing?.impresionDiagnostica ?? "");
   }, [open, existing]);
 
   // ¿Hay cambios respecto a lo guardado? (el backend rechaza guardar sin cambios)
@@ -50,12 +78,11 @@ export function AtencionDialog({ open, onOpenChange, estudianteId, existing }: P
     const antes = [...existing.motivos.map((m) => m.codigo)].sort().join(",");
     const ahora = [...motivos].sort().join(",");
     return (
-      anamnesis.trim() !== existing.anamnesis ||
+      CAMPOS_ANAMNESIS.some((c) => textos[c.key].trim() !== (existing[c.key] ?? "")) ||
       antes !== ahora ||
-      motivoOtro.trim() !== (existing.motivoOtro ?? "") ||
-      impresion.trim() !== (existing.impresionDiagnostica ?? "")
+      motivoOtro.trim() !== (existing.motivoOtro ?? "")
     );
-  }, [existing, anamnesis, motivos, motivoOtro, impresion]);
+  }, [existing, textos, motivos, motivoOtro]);
 
   const toggleMotivo = (codigo: string, checked: boolean) =>
     setMotivos((prev) => (checked ? [...prev, codigo] : prev.filter((c) => c !== codigo)));
@@ -63,10 +90,11 @@ export function AtencionDialog({ open, onOpenChange, estudianteId, existing }: P
   const mutation = useMutation({
     mutationFn: () => {
       const payload = {
-        anamnesis: anamnesis.trim(),
+        ...(Object.fromEntries(
+          CAMPOS_ANAMNESIS.map((c) => [c.key, textos[c.key].trim()])
+        ) as Textos),
         motivos,
         motivoOtro: motivoOtro.trim(),
-        impresionDiagnostica: impresion.trim(),
       };
       return existing
         ? atencionService.update(estudianteId, payload)
@@ -80,7 +108,7 @@ export function AtencionDialog({ open, onOpenChange, estudianteId, existing }: P
     },
   });
 
-  const canSave = anamnesis.trim().length > 0 && dirty && !mutation.isPending;
+  const canSave = textos.entrevistaRecepcion.trim().length > 0 && dirty && !mutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -95,17 +123,19 @@ export function AtencionDialog({ open, onOpenChange, estudianteId, existing }: P
         </DialogHeader>
 
         <div className="grid gap-5 py-2">
-          <div className="space-y-2">
-            <Label htmlFor="anamnesis">Anamnesis</Label>
-            <Textarea
-              id="anamnesis"
-              rows={7}
-              maxLength={MAX_ANAMNESIS}
-              value={anamnesis}
-              onChange={(e) => setAnamnesis(e.target.value)}
-              placeholder="Datos de la anamnesis del estudiante"
-            />
-            <p className="text-xs text-muted-foreground text-right">{anamnesis.length}/{MAX_ANAMNESIS}</p>
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold">Anamnesis</h3>
+            {CAMPOS_ANAMNESIS.filter((c) => c.key !== "impresionDiagnostica").map((c) => (
+              <CampoTexto
+                key={c.key}
+                id={c.key}
+                label={c.label}
+                required={c.required}
+                rows={c.rows}
+                value={textos[c.key]}
+                onChange={(v) => setTextos((prev) => ({ ...prev, [c.key]: v }))}
+              />
+            ))}
           </div>
 
           <div className="space-y-2">
@@ -134,18 +164,17 @@ export function AtencionDialog({ open, onOpenChange, estudianteId, existing }: P
             <p className="text-xs text-muted-foreground">Puedes dejar los motivos en blanco.</p>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="impresion">Impresión diagnóstica <span className="text-muted-foreground font-normal">(opcional)</span></Label>
-            <Textarea
-              id="impresion"
-              rows={2}
-              maxLength={MAX_IMPRESION}
-              value={impresion}
-              onChange={(e) => setImpresion(e.target.value)}
-              placeholder="Resumen breve"
+          {CAMPOS_ANAMNESIS.filter((c) => c.key === "impresionDiagnostica").map((c) => (
+            <CampoTexto
+              key={c.key}
+              id={c.key}
+              label={c.label}
+              required={false}
+              rows={c.rows}
+              value={textos[c.key]}
+              onChange={(v) => setTextos((prev) => ({ ...prev, [c.key]: v }))}
             />
-            <p className="text-xs text-muted-foreground text-right">{impresion.length}/{MAX_IMPRESION}</p>
-          </div>
+          ))}
         </div>
 
         <DialogFooter>
