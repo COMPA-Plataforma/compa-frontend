@@ -42,7 +42,7 @@ export function CheckInDetailDialog({ open, onOpenChange, estudianteId, checkInI
               <p className="text-sm text-muted-foreground capitalize">
                 {format(parseISO(detail.checkInDate), "EEEE d 'de' MMMM yyyy", { locale: es })}
               </p>
-                            {detail.emotionalStateIcon ? (
+              {detail.emotionalStateIcon ? (
                 <>
                   <p className="text-4xl">{detail.emotionalStateIcon}</p>
                   <p className="font-medium">{detail.emotionalStateLabel}</p>
@@ -73,6 +73,16 @@ export function CheckInDetailDialog({ open, onOpenChange, estudianteId, checkInI
                       <Badge variant="outline" className="mt-1 text-xs">
                         Motivo: {task.barrierLabel}
                       </Badge>
+                    )}
+                    {task.comment && (
+                      <div className="mt-2 rounded-md bg-muted px-3 py-2">
+                        <p className="text-xs font-medium text-muted-foreground">
+                          Comentario del estudiante
+                        </p>
+                        <p className="text-sm whitespace-pre-wrap break-words">
+                          {task.comment}
+                        </p>
+                      </div>
                     )}
                   </div>
                 </div>

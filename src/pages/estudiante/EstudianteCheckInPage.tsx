@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   BARRIER_LABELS,
+  COMMENT_MAX_LENGTH,
   type TaskBarrier,
   type TodayTask,
   type CheckInPayload,
@@ -11,7 +12,8 @@ import {
 import { estudianteMeService } from "@/services/estudianteMeService";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Flame, CheckCircle2, XCircle } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Loader2, Flame, CheckCircle2, XCircle, Info } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
@@ -35,14 +37,22 @@ export default function EstudianteCheckInPage() {
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [taskResponses, setTaskResponses] = useState<TaskResponse[]>([]);
   const [showBarrier, setShowBarrier] = useState(false);
+  const [comment, setComment] = useState("");
   const [existingCheckIn, setExistingCheckIn] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  const { data: todayTasks = [], isLoading: tasksLoading } = useQuery({
+  const {
+    data: todayTasks = [],
+    isLoading: tasksLoading,
+    error: tasksError,
+  } = useQuery({
     queryKey: ["me-todayTasks"],
     queryFn: estudianteMeService.getTodayTasks,
     enabled: step === "tasks",
+    retry: false,
   });
+
+  const noActivePlan = (tasksError as any)?.response?.status === 404;
 
   const { data: closing, isLoading: closingLoading } = useQuery({
     queryKey: ["me-closing-checkin"],
@@ -113,19 +123,32 @@ export default function EstudianteCheckInPage() {
     }
   };
 
+  const buildComment = () => {
+    const trimmed = comment.trim();
+    return trimmed === "" ? undefined : trimmed;
+  };
+
   const handleTaskDone = () => {
     if (!currentTask) return;
-    const updated = [...taskResponses, { taskId: currentTask.id, completed: true }];
+    const updated = [
+      ...taskResponses,
+      { taskId: currentTask.id, completed: true, comment: buildComment() },
+    ];
     setTaskResponses(updated);
     setShowBarrier(false);
+    setComment("");
     advanceOrSubmit(updated);
   };
 
   const handleBarrierSelect = (barrier: TaskBarrier) => {
     if (!currentTask) return;
-    const updated = [...taskResponses, { taskId: currentTask.id, completed: false, barrier }];
+    const updated = [
+      ...taskResponses,
+      { taskId: currentTask.id, completed: false, barrier, comment: buildComment() },
+    ];
     setTaskResponses(updated);
     setShowBarrier(false);
+    setComment("");
     advanceOrSubmit(updated);
   };
 
@@ -135,6 +158,7 @@ export default function EstudianteCheckInPage() {
     setCurrentTaskIndex(0);
     setTaskResponses([]);
     setShowBarrier(false);
+    setComment("");
     setStep("emotion");
   };
 
@@ -208,7 +232,21 @@ export default function EstudianteCheckInPage() {
           ) : todayTasks.length === 0 ? (
             <Card>
               <CardContent className="pt-6 text-center space-y-4">
-                <p className="text-muted-foreground">No tienes tareas asignadas hoy.</p>
+                {noActivePlan ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <Info className="h-8 w-8 text-muted-foreground" />
+                    <p className="font-medium text-foreground">
+                      Aún no tienes un plan de acompañamiento activo
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Tu psicoorientador debe crearlo para que puedas informar el
+                      cumplimiento de tus actividades. Mientras tanto, puedes registrar
+                      cómo te sientes.
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">No tienes tareas asignadas hoy.</p>
+                )}
                 <Button onClick={() => {
                   const payload: CheckInPayload = { emotionalState: selectedEmotion!, tasks: [] };
                   if (isEditing) updateMutation.mutate(payload);
@@ -226,6 +264,19 @@ export default function EstudianteCheckInPage() {
                   {currentTask.description && (
                     <p className="text-sm text-muted-foreground">{currentTask.description}</p>
                   )}
+                </div>
+
+                <div className="space-y-1">
+                  <Textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    maxLength={COMMENT_MAX_LENGTH}
+                    rows={3}
+                    placeholder="Cuéntanos cómo te fue o por qué no pudiste (opcional)"
+                  />
+                  <p className="text-xs text-muted-foreground text-right">
+                    {comment.length}/{COMMENT_MAX_LENGTH}
+                  </p>
                 </div>
 
                 {!showBarrier ? (

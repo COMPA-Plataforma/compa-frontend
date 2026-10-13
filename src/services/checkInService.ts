@@ -14,6 +14,8 @@ export interface TaskResponse {
   taskId: number;
   completed: boolean;
   barrier?: string | null;
+  comment?: string | null;
+
 }
 
 export interface CheckInPayload {
@@ -48,6 +50,8 @@ export const BARRIER_LABELS: Record<TaskBarrier, string> = {
   OTRO: "Otro",
 };
 
+export const COMMENT_MAX_LENGTH = 500;
+
 export interface CheckInSummary {
   date: string;
   status: "COMPLETADO" | "NO_REGISTRADO";
@@ -63,6 +67,8 @@ export interface CheckInDetailTask {
   completed: boolean;
   barrier: string | null;
   barrierLabel: string | null;
+  comment: string | null;
+
 }
 
 export interface CheckInDetail {
