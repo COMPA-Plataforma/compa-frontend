@@ -10,7 +10,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { AtencionDialog } from "@/components/atencion/AtencionDialog";
 import { atencionService } from "@/services/atencionService";
-import type { Atencion, MotivoItem } from "@/types";
+import { CAMPOS_ANAMNESIS } from "@/lib/atencion";
+import type { Atencion, AtencionVersion, MotivoItem } from "@/types";
 
 type AtencionResult =
   | { status: "ok"; data: Atencion }
@@ -28,6 +29,27 @@ function Motivos({ motivos, otro }: { motivos: MotivoItem[]; otro: string | null
       ))}
       {otro && <Badge variant="outline">Otro: {otro}</Badge>}
     </div>
+  );
+}
+
+// Muestra los campos de anamnesis y la impresión diagnóstica (vacíos se ven como "—").
+// Los motivos de consulta van entre la anamnesis y la impresión diagnóstica.
+function Campos({ datos, className }: { datos: Atencion | AtencionVersion; className?: string }) {
+  const campo = (c: (typeof CAMPOS_ANAMNESIS)[number]) => (
+    <div key={c.key}>
+      <p className="text-sm text-muted-foreground">{c.label}</p>
+      <p className={className}>{datos[c.key] || "—"}</p>
+    </div>
+  );
+  return (
+    <>
+      {CAMPOS_ANAMNESIS.filter((c) => c.key !== "impresionDiagnostica").map(campo)}
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground">Motivos de consulta</p>
+        <Motivos motivos={datos.motivos} otro={datos.motivoOtro} />
+      </div>
+      {CAMPOS_ANAMNESIS.filter((c) => c.key === "impresionDiagnostica").map(campo)}
+    </>
   );
 }
 
@@ -101,20 +123,7 @@ export function AtencionSection({ estudianteId }: { estudianteId: number }) {
             <Button variant="outline" size="sm" onClick={() => setDialogOpen(true)}>Actualizar atención</Button>
           </div>
 
-          <div>
-            <p className="text-sm text-muted-foreground">Anamnesis</p>
-            <p className="font-medium whitespace-pre-wrap">{atencion.anamnesis}</p>
-          </div>
-
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Motivos de consulta</p>
-            <Motivos motivos={atencion.motivos} otro={atencion.motivoOtro} />
-          </div>
-
-          <div>
-            <p className="text-sm text-muted-foreground">Impresión diagnóstica</p>
-            <p className="font-medium">{atencion.impresionDiagnostica || "—"}</p>
-          </div>
+          <Campos datos={atencion} className="font-medium whitespace-pre-wrap" />
 
           <Collapsible open={historyOpen} onOpenChange={setHistoryOpen}>
             <CollapsibleTrigger asChild>
@@ -134,18 +143,7 @@ export function AtencionSection({ estudianteId }: { estudianteId: number }) {
                         Versión {v.numero} · {fmt(v.fecha)} · {v.autorNombre}
                       </AccordionTrigger>
                       <AccordionContent className="space-y-3">
-                        <div>
-                          <p className="text-sm text-muted-foreground">Anamnesis</p>
-                          <p className="whitespace-pre-wrap">{v.anamnesis}</p>
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-sm text-muted-foreground">Motivos de consulta</p>
-                          <Motivos motivos={v.motivos} otro={v.motivoOtro} />
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">Impresión diagnóstica</p>
-                          <p>{v.impresionDiagnostica || "—"}</p>
-                        </div>
+                        <Campos datos={v} className="whitespace-pre-wrap" />
                       </AccordionContent>
                     </AccordionItem>
                   ))}

@@ -193,7 +193,12 @@ export interface Atencion {
   estudianteId: number;
   orientadorId: number | null;
   orientadorNombre: string | null;
-  anamnesis: string;
+  entrevistaRecepcion: string;
+  situacionActual: string | null;
+  antecedentes: string | null;
+  aspectosPsicosociales: string | null;
+  relacionesFamiliares: string | null;
+  observacionesSalud: string | null;
   motivos: MotivoItem[];
   motivoOtro: string | null;
   impresionDiagnostica: string | null;
@@ -207,14 +212,24 @@ export interface AtencionVersion {
   fecha: string;
   autorId: number;
   autorNombre: string;
-  anamnesis: string;
+  entrevistaRecepcion: string;
+  situacionActual: string | null;
+  antecedentes: string | null;
+  aspectosPsicosociales: string | null;
+  relacionesFamiliares: string | null;
+  observacionesSalud: string | null;
   motivos: MotivoItem[];
   motivoOtro: string | null;
   impresionDiagnostica: string | null;
 }
 
 export interface AtencionPayload {
-  anamnesis: string;
+  entrevistaRecepcion: string;
+  situacionActual: string;
+  antecedentes: string;
+  aspectosPsicosociales: string;
+  relacionesFamiliares: string;
+  observacionesSalud: string;
   motivos: string[];
   motivoOtro: string;
   impresionDiagnostica: string;
