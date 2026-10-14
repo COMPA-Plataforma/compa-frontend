@@ -1,7 +1,7 @@
 import api from "@/lib/axiosConfig";
 
 export type AlertType = "RIESGO_ALTO" | "RIESGO_MEDIO" | "SIN_CHECKIN";
-export type AlertStatus = "PENDIENTE" | "RESUELTA" | "IGNORADA";
+export type AlertStatus = "PENDIENTE" | "RESUELTA" | "IGNORADA" | "ATENDIDA_POR_DERIVACION";
 
 export interface Alert {
   id: number;

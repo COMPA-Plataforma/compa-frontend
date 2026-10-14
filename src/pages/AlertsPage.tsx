@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { alertService, Alert, AlertType, AlertStatus } from "@/services/alertService";
-import { Bell, CheckCircle2, XCircle, Loader2, AlertTriangle, AlertCircle } from "lucide-react";
+import { Bell, CheckCircle2, XCircle, Loader2, AlertTriangle, AlertCircle, Send } from "lucide-react";
+import { DerivacionDialog } from "@/components/alertas/DerivacionDialog";
 
 const typeConfig: Record<AlertType, { label: string; color: string; bg: string; icon: JSX.Element }> = {
   RIESGO_ALTO: {
@@ -29,6 +30,7 @@ const statusLabel: Record<AlertStatus, string> = {
   PENDIENTE: "Pendiente",
   RESUELTA: "Resuelta",
   IGNORADA: "Ignorada",
+  ATENDIDA_POR_DERIVACION: "Atendida por derivación",
 };
 
 function formatDate(dateStr: string) {
@@ -43,6 +45,8 @@ export default function AlertsPage() {
   const navigate = useNavigate();
   const [confirmIgnoreId, setConfirmIgnoreId] = useState<number | null>(null);
   const [confirmIgnoreName, setConfirmIgnoreName] = useState<string>("");
+  const [derivar, setDerivar] = useState<{ id: number; name: string } | null>(null);
+  const [derivarOpen, setDerivarOpen] = useState(false);
 
   const { data: alerts, isLoading } = useQuery({
     queryKey: ["alerts"],
@@ -135,6 +139,13 @@ export default function AlertsPage() {
           </div>
         </div>
       )}
+
+      <DerivacionDialog
+        open={derivarOpen}
+        onOpenChange={setDerivarOpen}
+        alertId={derivar?.id ?? null}
+        estudianteName={derivar?.name ?? ""}
+      />
 
       {/* Botón Volver */}
 
@@ -230,6 +241,18 @@ export default function AlertsPage() {
                       <CheckCircle2 size={13} /> Resolver
                     </button>
                     <button
+                      onClick={() => { setDerivar({ id: alert.id, name: alert.estudianteName }); setDerivarOpen(true); }}
+                      style={{
+                        display: "flex", alignItems: "center", gap: "0.35rem",
+                        padding: "0.4rem 0.85rem",
+                        background: "hsl(199, 89%, 38%)", color: "white",
+                        border: "none", borderRadius: 6, cursor: "pointer",
+                        fontSize: "0.78rem", fontWeight: 600,
+                      }}
+                    >
+                      <Send size={13} /> Derivar
+                    </button>
+                    <button
                       onClick={() => {
                         setConfirmIgnoreId(alert.id);
                         setConfirmIgnoreName(alert.estudianteName);
@@ -276,8 +299,10 @@ export default function AlertsPage() {
                     </span>
                     <span style={{
                       fontSize: "0.7rem", padding: "0.1rem 0.5rem",
-                      background: alert.status === "RESUELTA" ? "#dcfce7" : "#f3f4f6",
-                      color: alert.status === "RESUELTA" ? "#16a34a" : "#6b7280",
+                      background: alert.status === "RESUELTA" ? "#dcfce7"
+                        : alert.status === "ATENDIDA_POR_DERIVACION" ? "#e0f2fe" : "#f3f4f6",
+                      color: alert.status === "RESUELTA" ? "#16a34a"
+                        : alert.status === "ATENDIDA_POR_DERIVACION" ? "#0369a1" : "#6b7280",
                       borderRadius: 20, fontWeight: 600,
                     }}>
                       {statusLabel[alert.status]}
