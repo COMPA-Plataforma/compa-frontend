@@ -517,6 +517,16 @@ export default function LoginPage() {
                 Regístrate aquí
               </Link>
             </p>
+            <p style={{
+              textAlign: "center", marginTop: "0.75rem",
+              fontSize: "0.8rem", fontFamily: "system-ui, sans-serif",
+            }}>
+              <Link to="/politica-datos" style={{
+                color: "hsl(215, 15%, 47%)", textDecoration: "underline",
+              }}>
+                Política de tratamiento de datos personales
+              </Link>
+            </p>
           </div>
         </div>
       </div>

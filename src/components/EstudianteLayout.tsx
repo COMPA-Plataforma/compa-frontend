@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { authService } from "@/services/authService";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Home, CheckCircle2, Calendar, ClipboardList, LogOut, FileText, BarChart2, Moon, Sun } from "lucide-react";
+import { Home, CheckCircle2, Calendar, ClipboardList, LogOut, FileText, BarChart2, Moon, Sun, ShieldCheck } from "lucide-react";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { NotificationBell } from "@/components/NotificationBell";
 
@@ -49,6 +49,15 @@ export default function EstudianteLayout({ children }: { children: React.ReactNo
             aria-label="Consentimientos"
           >
             <FileText className="h-5 w-5" />
+          </NavLink>
+
+          <NavLink
+            to="/politica-datos"
+            className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent"
+            aria-label="Política de datos"
+            title="Política de datos"
+          >
+            <ShieldCheck className="h-5 w-5" />
           </NavLink>
 
           {/* Toggle modo oscuro */}
