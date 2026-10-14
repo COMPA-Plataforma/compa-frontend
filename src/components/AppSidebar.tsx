@@ -1,4 +1,4 @@
-import { Users, UserX, ShieldAlert, Activity, LogOut, Bell, LayoutDashboard, Moon, Sun } from "lucide-react";
+import { Users, UserX, ShieldAlert, Activity, LogOut, Bell, LayoutDashboard, Moon, Sun, ShieldCheck } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -109,6 +109,15 @@ export function AppSidebar() {
           </div>
         )}
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={() => navigate("/politica-datos")}
+              className="hover:bg-sidebar-accent/50 cursor-pointer text-sidebar-foreground/80 hover:text-sidebar-foreground"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              {!collapsed && <span>Política de datos</span>}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={toggle}

@@ -29,6 +29,7 @@ import ProgressReportPage from "@/pages/ProgressReportPage";
 import AlertsPage from "@/pages/AlertsPage";
 import DashboardPage from "@/pages/DashboardPage";
 import CompleteTaskPage from "@/pages/CompleteTaskPage";
+import PoliticaDatosPage from "@/pages/PoliticaDatosPage";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => (
         <Routes>
           {/* Públicas */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/politica-datos" element={<PoliticaDatosPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/activate" element={<ActivateAccountPage />} />
