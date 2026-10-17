@@ -43,7 +43,7 @@ export function AddTaskDialog({ open, onOpenChange, estudianteId, planId }: Prop
         sessionDate: format(sessionDate!, "yyyy-MM-dd"),
       }),
     onSuccess: () => {
-      toast.success("Tarea agregada");
+      toast.success("Actividad agregada");
       queryClient.invalidateQueries({ queryKey: ["habitPlans", estudianteId] });
       handleClose();
     },
@@ -53,7 +53,7 @@ export function AddTaskDialog({ open, onOpenChange, estudianteId, planId }: Prop
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Agregar Tarea</DialogTitle>
+          <DialogTitle>Agregar Actividad</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-2">
           <div className="space-y-2">

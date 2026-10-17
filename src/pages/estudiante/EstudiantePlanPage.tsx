@@ -167,7 +167,7 @@ export default function EstudiantePlanPage() {
         {/* Tareas */}
         <div className="space-y-2">
           <h2 className="text-sm font-semibold text-foreground px-1">
-            Tareas del plan ({plan.tasks?.length ?? 0})
+            Actividades del plan ({plan.tasks?.length ?? 0})
           </h2>
           {plan.tasks && plan.tasks.length > 0 ? (
             plan.tasks.map((task, index) => (
@@ -216,7 +216,7 @@ export default function EstudiantePlanPage() {
           ) : (
             <Card>
               <CardContent className="py-6 text-center text-sm text-muted-foreground">
-                Tu plan aún no tiene tareas.
+                Tu plan aún no tiene actividades.
               </CardContent>
             </Card>
           )}

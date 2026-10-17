@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { authService, LoginData } from "@/services/authService";
+import abrazo from "@/assets/abrazo.webp";
 
 const loginSchema = z.object({
   email: z.string().email("Debe ser un correo válido"),
@@ -330,9 +331,7 @@ export default function LoginPage() {
               display: "flex", alignItems: "center", justifyContent: "center",
               margin: "0 auto 2rem",
             }}>
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="hsl(199, 89%, 70%)" strokeWidth="1.5">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-              </svg>
+              <img src={abrazo} alt="" style={{ width: 56, height: 56, objectFit: "contain" }} />
             </div>
 
             <h1 style={{

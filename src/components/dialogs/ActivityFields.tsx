@@ -241,7 +241,7 @@ export function ActivityFields({
           onChange={(e) => set("mandatory", e.target.checked)}
           className="h-4 w-4"
         />
-        <Label htmlFor={`mandatory-${uid}`}>Tarea obligatoria</Label>
+        <Label htmlFor={`mandatory-${uid}`}>Actividad obligatoria</Label>
       </div>
     </div>
   );

@@ -215,9 +215,9 @@ export default function EstudianteCheckInPage() {
       {step === "tasks" && (
         <div className="space-y-6 animate-in fade-in duration-300">
           <div className="text-center space-y-2">
-            <h2 className="text-xl font-bold text-foreground">Tus tareas de hoy</h2>
+            <h2 className="text-xl font-bold text-foreground">Tus actividades de hoy</h2>
             <p className="text-sm text-muted-foreground">
-              Tarea {currentTaskIndex + 1} de {todayTasks.length}
+              Actividad {currentTaskIndex + 1} de {todayTasks.length}
             </p>
             <Progress
               value={(currentTaskIndex / Math.max(todayTasks.length, 1)) * 100}
@@ -245,7 +245,7 @@ export default function EstudianteCheckInPage() {
                     </p>
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">No tienes tareas asignadas hoy.</p>
+                  <p className="text-muted-foreground">No tienes actividades asignadas hoy.</p>
                 )}
                 <Button onClick={() => {
                   const payload: CheckInPayload = { emotionalState: selectedEmotion!, tasks: [] };

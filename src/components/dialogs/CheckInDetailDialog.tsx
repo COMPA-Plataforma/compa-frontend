@@ -55,7 +55,7 @@ export function CheckInDetailDialog({ open, onOpenChange, estudianteId, checkInI
             </div>
 
             <div className="space-y-3">
-              <h4 className="text-sm font-semibold text-muted-foreground">Tareas</h4>
+              <h4 className="text-sm font-semibold text-muted-foreground">Actividades</h4>
               {detail.tasks.map((task) => (
                 <div
                   key={task.taskId}

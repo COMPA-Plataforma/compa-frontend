@@ -126,9 +126,9 @@ export default function EstudianteHistoryPage() {
               </div>
 
               <div className="space-y-2">
-                <h4 className="text-sm font-semibold">Tareas</h4>
+                <h4 className="text-sm font-semibold">Actividades</h4>
                 {detail.tasks.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Sin tareas registradas.</p>
+                  <p className="text-sm text-muted-foreground">Sin actividades registradas.</p>
                 ) : (
                   detail.tasks.map((t) => (
                     <div key={t.taskId} className="flex items-start justify-between gap-2 p-2 rounded border">

@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle2, FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { estudianteMeService } from "@/services/estudianteMeService";
+import { consentTipoLabel, formatConsentVersion } from "@/lib/consents";
 
 export default function EstudianteConsentsPage() {
   const queryClient = useQueryClient();
@@ -20,6 +21,7 @@ export default function EstudianteConsentsPage() {
     onSuccess: () => {
       toast.success("Consentimiento aceptado");
       queryClient.invalidateQueries({ queryKey: ["me-consents"] });
+      queryClient.invalidateQueries({ queryKey: ["me-consents-pending"] });
     },
     onError: () => toast.error("No se pudo aceptar el consentimiento"),
   });
@@ -66,11 +68,11 @@ export default function EstudianteConsentsPage() {
                 )}
               </div>
               <p className="text-xs text-muted-foreground">
-                Versión {consent.consentTemplate.version} · {consent.consentTemplate.tipo}
+                Versión {formatConsentVersion(consent.consentTemplate.version)} · {consentTipoLabel(consent.consentTemplate.tipo)}
               </p>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-sm text-foreground whitespace-pre-line line-clamp-6">
+              <p className="text-sm text-foreground whitespace-pre-line">
                 {consent.consentTemplate.contenido}
               </p>
 
@@ -78,9 +80,10 @@ export default function EstudianteConsentsPage() {
                 consent.fechaAceptacion && (
                   <p className="text-xs text-muted-foreground">
                     Aceptado el{" "}
-                    {new Date(consent.fechaAceptacion).toLocaleDateString("es-ES", {
-                      day: "numeric", month: "long", year: "numeric",
+                    {new Date(consent.fechaAceptacion).toLocaleString("es-ES", {
+                      dateStyle: "long", timeStyle: "short",
                     })}
+                    {consent.versionAceptada && ` · Versión aceptada: ${formatConsentVersion(consent.versionAceptada)}`}
                   </p>
                 )
               ) : (

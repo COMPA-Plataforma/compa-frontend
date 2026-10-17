@@ -55,6 +55,11 @@ export const estudianteMeService = {
       .get<EstudianteConsent[]>("/api/estudiantes/me/consents")
       .then((r) => r.data),
 
+  hasPendingConsents: () =>
+    api
+      .get<boolean>("/api/estudiantes/me/consents/pending")
+      .then((r) => r.data),
+
   acceptConsent: (consentId: number) =>
     api
       .patch(`/api/estudiantes/me/consents/${consentId}/accept`)

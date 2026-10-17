@@ -222,10 +222,10 @@ export default function CheckInPage() {
         <div className="space-y-6 animate-in fade-in duration-300">
           <div className="text-center space-y-2">
             <h2 className="text-2xl font-bold text-foreground">
-              Tus tareas de hoy
+              Tus actividades de hoy
             </h2>
             <p className="text-muted-foreground">
-              Tarea {currentTaskIndex + 1} de {todayTasks.length}
+              Actividad {currentTaskIndex + 1} de {todayTasks.length}
             </p>
             <Progress
               value={(currentTaskIndex / Math.max(todayTasks.length, 1)) * 100}
@@ -241,7 +241,7 @@ export default function CheckInPage() {
             <Card>
               <CardContent className="pt-6 text-center space-y-4">
                 <p className="text-muted-foreground text-lg">
-                  No tienes tareas asignadas hoy.
+                  No tienes actividades asignadas hoy.
                 </p>
                 <Button
                   onClick={() => {

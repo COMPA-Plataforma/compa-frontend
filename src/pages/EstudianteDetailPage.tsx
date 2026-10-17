@@ -113,7 +113,7 @@ export default function EstudianteDetailPage() {
     mutationFn: ({ planId, taskId }: { planId: number; taskId: number }) =>
       habitPlanService.deleteTask(estudianteId, planId, taskId),
     onSuccess: () => {
-      toast.success("Tarea eliminada");
+      toast.success("Actividad eliminada");
       queryClient.invalidateQueries({ queryKey: ["habitPlans", estudianteId] });
     },
   });
@@ -194,7 +194,7 @@ export default function EstudianteDetailPage() {
           <TabsTrigger value="seguimientos">Seguimientos</TabsTrigger>
           <TabsTrigger value="habits">Planes de Hábitos</TabsTrigger>
           <TabsTrigger value="consents">Consentimientos</TabsTrigger>
-          <TabsTrigger value="today-tasks">Tareas de Hoy</TabsTrigger>
+          <TabsTrigger value="today-tasks">Actividades de Hoy</TabsTrigger>
         </TabsList>
 
         {/* ── Información Clínica ── */}
@@ -341,7 +341,7 @@ export default function EstudianteDetailPage() {
                       )}
                       {plan.status === "ACTIVO" && (
                         <Button variant="outline" size="sm" onClick={() => setAddTaskDialog({ open: true, planId: plan.id })}>
-                          <Plus className="mr-1 h-3.5 w-3.5" /> Agregar Tarea
+                          <Plus className="mr-1 h-3.5 w-3.5" /> Agregar Actividad
                         </Button>
                       )}
                       <Button variant="outline" size="sm"
@@ -353,7 +353,7 @@ export default function EstudianteDetailPage() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Tarea</TableHead>
+                            <TableHead>Actividad</TableHead>
                             <TableHead>Descripción</TableHead>
                             <TableHead>Prioridad</TableHead>
                             <TableHead>Fecha límite / frecuencia</TableHead>
@@ -397,7 +397,7 @@ export default function EstudianteDetailPage() {
                         </TableBody>
                       </Table>
                     ) : (
-                      <p className="text-sm text-muted-foreground">No hay tareas en este plan.</p>
+                      <p className="text-sm text-muted-foreground">No hay actividades en este plan.</p>
                     )}
                   </CardContent>
                 )}
@@ -462,7 +462,7 @@ export default function EstudianteDetailPage() {
           ) : todayTasks.length === 0 ? (
             <Card>
               <CardContent className="pt-6 text-center text-muted-foreground">
-                No hay tareas programadas para hoy.
+                No hay actividades programadas para hoy.
               </CardContent>
             </Card>
           ) : (

@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import AppLayout from "@/components/AppLayout";
 import EstudianteLayout from "@/components/EstudianteLayout";
+import ConsentGate from "@/components/ConsentGate";
 import EstudianteListPage from "@/pages/EstudianteListPage";
 import EstudianteDetailPage from "@/pages/EstudianteDetailPage";
 import InactiveEstudiantesPage from "@/pages/InactiveEstudiantesPage";
@@ -59,7 +60,6 @@ const App = () => (
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/activate" element={<ActivateAccountPage />} />
-          <Route path="/estudiante/progress-report" element={<EstudianteProgressReportPage />} />
           <Route path="/alerts" element={<AlertsPage />} />
           <Route path="/activate" element={<ActivateAccountPage />} />
 
@@ -68,6 +68,7 @@ const App = () => (
             path="/estudiante/*"
             element={
               <ProtectedRoute allowedRole="ESTUDIANTE">
+                <ConsentGate>
                 <EstudianteLayout>
                   <Routes>
                     <Route index element={<Navigate to="home" replace />} />
@@ -76,9 +77,11 @@ const App = () => (
                     <Route path="history" element={<EstudianteHistoryPage />} />
                     <Route path="plan" element={<EstudiantePlanPage />} />
                     <Route path="consents" element={<EstudianteConsentsPage />} />
+                    <Route path="progress-report" element={<EstudianteProgressReportPage />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </EstudianteLayout>
+                </ConsentGate>
               </ProtectedRoute>
             }
           />

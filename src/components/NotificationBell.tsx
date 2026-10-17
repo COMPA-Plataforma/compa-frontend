@@ -28,10 +28,10 @@ function NotificationItem({ notification }: { notification: AppNotification }) {
       queryClient.invalidateQueries({ queryKey: ["notifications-unread-count"] });
       queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
       queryClient.invalidateQueries({ queryKey: ["today-check-in"] });
-      toast.success("¡Tarea registrada como cumplida!");
+      toast.success("¡Actividad registrada como cumplida!");
     },
     onError: () => {
-      toast.error("No pudimos registrar la tarea. Intenta de nuevo.");
+      toast.error("No pudimos registrar la actividad. Intenta de nuevo.");
     },
   });
 
@@ -53,7 +53,7 @@ function NotificationItem({ notification }: { notification: AppNotification }) {
           {alreadyDone ? (
             <div className="flex items-center gap-1.5 text-sm font-medium text-green-600 dark:text-green-500">
               <CheckCircle2 className="h-4 w-4" />
-              Tarea registrada como cumplida
+              Actividad registrada como cumplida
             </div>
           ) : (
             <Button

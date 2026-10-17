@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Home, CheckCircle2, Calendar, ClipboardList, LogOut, FileText, BarChart2, Moon, Sun, ShieldCheck } from "lucide-react";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { NotificationBell } from "@/components/NotificationBell";
+import abrazo from "@/assets/abrazo.webp";
 
 const navItems = [
   { to: "/estudiante/home", label: "Inicio", icon: Home },
@@ -29,7 +30,10 @@ export default function EstudianteLayout({ children }: { children: React.ReactNo
       {/* Header */}
       <header id="estudiante-header" className="sticky top-0 z-30 flex items-center justify-between border-b bg-card px-4 py-3 shadow-sm">
         <div className="flex flex-col">
-          <h1 className="text-base font-semibold text-foreground">COMPA</h1>
+          <h1 className="flex items-center gap-2 text-base font-semibold text-foreground">
+            <img src={abrazo} alt="" className="h-6 w-auto" />
+            COMPA
+          </h1>
           {user && (
             <p className="text-xs text-muted-foreground">
               Hola, {user.name}

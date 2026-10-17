@@ -64,7 +64,7 @@ export default function CompleteTaskPage() {
               style={{ width: 48, height: 48, margin: "0 auto 1rem", color: "#6b6b6b" }}
             />
             <h1 style={{ fontSize: "1.5rem", color: "#2b2b2b", margin: 0 }}>
-              Registrando tu tarea...
+              Registrando tu actividad...
             </h1>
           </>
         )}
@@ -75,7 +75,7 @@ export default function CompleteTaskPage() {
               style={{ width: 64, height: 64, margin: "0 auto 1rem", color: "#16a34a" }}
             />
             <h1 style={{ fontSize: "1.75rem", color: "#2b2b2b", margin: "0 0 0.75rem" }}>
-              ¡Tarea registrada como cumplida!
+              ¡Actividad registrada como cumplida!
             </h1>
             <p style={{ color: "#5e5e5e", lineHeight: 1.6, margin: "0 0 1.75rem" }}>
               Quedó guardada en tu registro de hoy, tal como si la hubieras marcado
@@ -113,7 +113,7 @@ export default function CompleteTaskPage() {
               style={{ width: 64, height: 64, margin: "0 auto 1rem", color: "#dc2626" }}
             />
             <h1 style={{ fontSize: "1.75rem", color: "#2b2b2b", margin: "0 0 0.75rem" }}>
-              No pudimos registrar la tarea
+              No pudimos registrar la actividad
             </h1>
             <p style={{ color: "#5e5e5e", lineHeight: 1.6, margin: "0 0 1.75rem" }}>
               {errorMessage}

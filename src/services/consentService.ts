@@ -12,6 +12,7 @@ export interface EstudianteConsent {
   id: number;
   aceptado: boolean;
   fechaAceptacion: string | null;
+  versionAceptada: string | null;
   consentTemplate: ConsentTemplate;
 }
 
@@ -22,9 +23,5 @@ export const consentService = {
 
   hasPending: (estudianteId: number) =>
     api.get<boolean>(`/api/estudiantes/${estudianteId}/consents/pending`)
-       .then((r) => r.data),
-
-  accept: (estudianteId: number, consentId: number) =>
-    api.patch(`/api/estudiantes/${estudianteId}/consents/${consentId}/accept`)
        .then((r) => r.data),
 };
