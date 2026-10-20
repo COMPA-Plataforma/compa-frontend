@@ -10,6 +10,29 @@ import type {
 import type { HabitPlan, Estudiante } from "@/types";
 import type { EstudianteConsent } from "@/services/consentService";
 
+export interface ActividadProgreso {
+  taskId: number;
+  name: string;
+  frequency: string | null;
+  scheduled: number;
+  completed: number;
+  notCompleted: number;
+  pending: number;
+}
+
+export interface ProgresoPlan {
+  planName: string;
+  from: string;
+  to: string;
+  scheduled: number;
+  completed: number;
+  notCompleted: number;
+  pending: number;
+  percentage: number | null;
+  hasReports: boolean;
+  activities: ActividadProgreso[];
+}
+
 export const estudianteMeService = {
   getMe: () => api.get<Estudiante>("/api/estudiantes/me").then((r) => r.data),
 
@@ -63,5 +86,11 @@ export const estudianteMeService = {
   acceptConsent: (consentId: number) =>
     api
       .patch(`/api/estudiantes/me/consents/${consentId}/accept`)
+      .then((r) => r.data),
+  getProgress: (from?: string, to?: string) =>
+    api
+      .get<ProgresoPlan>("/api/estudiantes/me/progress", {
+        params: { ...(from && { from }), ...(to && { to }) },
+      })
       .then((r) => r.data),
 };
