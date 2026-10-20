@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { authService, LoginData } from "@/services/authService";
 import abrazo from "@/assets/abrazo.webp";
+import { homeByRole } from "@/lib/roles";
 
 const loginSchema = z.object({
   email: z.string().email("Debe ser un correo válido"),
@@ -275,15 +276,9 @@ export default function LoginPage() {
     try {
       const response = await authService.login(data as LoginData);
 
-      if (response.role === "ORIENTADOR") {
-        navigate("/dashboard");
-      } else if (response.role === "ESTUDIANTE") {
-        navigate("/estudiante/home");
-      } else {
-        navigate("/");
-      }
-    } catch (error) {
-      console.error(error);
+      navigate(homeByRole(response.role));
+    } catch {
+      // El interceptor de axios ya muestra el toast de error.
     } finally {
       setIsLoading(false);
     }

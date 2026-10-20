@@ -31,6 +31,11 @@ import AlertsPage from "@/pages/AlertsPage";
 import DashboardPage from "@/pages/DashboardPage";
 import CompleteTaskPage from "@/pages/CompleteTaskPage";
 import PoliticaDatosPage from "@/pages/PoliticaDatosPage";
+import AdminLayout from "@/components/AdminLayout";
+import AdminUsersPage from "@/pages/admin/AdminUsersPage";
+import CoordinadorLayout from "@/components/CoordinadorLayout";
+import CoordinadorHomePage from "@/pages/coordinador/CoordinadorHomePage";
+import { homeByRole, type Role } from "@/lib/roles";
 
 const queryClient = new QueryClient();
 
@@ -39,11 +44,12 @@ const ProtectedRoute = ({
   allowedRole,
 }: {
   children: React.ReactNode;
-  allowedRole: "ORIENTADOR" | "ESTUDIANTE";
+  allowedRole: Role;
 }) => {
   const user = authService.getCurrentUser();
   if (!user) return <Navigate to="/login" replace />;
-  if (user.role !== allowedRole) return <Navigate to="/login" replace />;
+  // Con otro rol se envía a su propia pantalla de inicio (no a /login, para evitar bucles).
+  if (user.role !== allowedRole) return <Navigate to={homeByRole(user.role)} replace />;
   return <>{children}</>;
 };
 
@@ -82,6 +88,37 @@ const App = () => (
                   </Routes>
                 </EstudianteLayout>
                 </ConsentGate>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Rutas del ADMINISTRADOR */}
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute allowedRole="ADMINISTRADOR">
+                <AdminLayout>
+                  <Routes>
+                    <Route index element={<Navigate to="users" replace />} />
+                    <Route path="users" element={<AdminUsersPage />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Rutas del COORDINADOR DE BIENESTAR */}
+          <Route
+            path="/coordinador/*"
+            element={
+              <ProtectedRoute allowedRole="COORDINADOR_BIENESTAR">
+                <CoordinadorLayout>
+                  <Routes>
+                    <Route index element={<CoordinadorHomePage />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </CoordinadorLayout>
               </ProtectedRoute>
             }
           />
