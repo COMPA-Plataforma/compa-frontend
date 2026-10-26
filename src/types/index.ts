@@ -269,3 +269,20 @@ export interface SeguimientoPayload {
   cierreProceso: boolean;
   remision: boolean;
 }
+
+// Experiencia que el estudiante cuenta sobre una actividad de su plan
+export interface Experiencia {
+  id: number;
+  actividadId: number;
+  actividadNombre: string;
+  texto: string;
+  fecha: string;               // yyyy-MM-dd, día en que se registró
+  createdAt: string;
+  updatedAt: string | null;    // solo si se corrigió
+  editable: boolean;           // true solo el mismo día en que se registró
+}
+ 
+export interface ExperienciaPayload {
+  actividadId?: number;        // obligatoria al registrar; al corregir no cambia
+  texto: string;
+}

@@ -30,8 +30,11 @@ api.interceptors.response.use(
     const backendMessage = error.response?.data?.message || error.response?.data?.error;
 
     // 401, o 403 sin mensaje (rechazo de seguridad: token vencido o sin permiso de rol) -> cerrar sesión.
-    // Un 403 con mensaje es una regla de negocio (ej. estudiante de otro orientador): no cierra sesión.
-    if (status === 401 || (status === 403 && !backendMessage)) {
+    // Cuando /error es público, Spring responde ese rechazo con el texto genérico "Forbidden":
+    // se trata igual que un 403 sin mensaje.
+    // Un 403 con mensaje propio es una regla de negocio (ej. estudiante de otro orientador): no cierra sesión.
+    const rechazoDeSeguridad = status === 403 && (!backendMessage || backendMessage === "Forbidden");
+    if (status === 401 || rechazoDeSeguridad) {
       localStorage.removeItem("compa_token");
       localStorage.removeItem("compa_user");
       window.location.href = "/login";

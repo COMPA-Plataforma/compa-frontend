@@ -1,14 +1,22 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { ClipboardList, Calendar, Printer, CheckSquare, Repeat } from "lucide-react";
+import { ClipboardList, Calendar, Printer, CheckSquare, Repeat, MessageSquareText } from "lucide-react";
 import { estudianteMeService } from "@/services/estudianteMeService";
 import { authService } from "@/services/authService";
 import { frecuenciaTexto } from "@/lib/habitos";
+import { ExperienciaDialog } from "@/components/experiencias/ExperienciaDialog";
+import { ExperienciasSection } from "@/components/experiencias/ExperienciasSection";
+import type { Experiencia } from "@/types";
 
 export default function EstudiantePlanPage() {
   const currentUser = authService.getCurrentUser();
+  // Diálogo de experiencias: se abre desde una tarea, desde la sección o para corregir una
+  const [dialog, setDialog] = useState<{ open: boolean; actividadId?: number; experiencia?: Experiencia | null }>({
+    open: false,
+  });
 
   // getActivePlan devuelve null si no hay plan activo; cualquier otro fallo llega como isError
   const { data: plan, isLoading, isError } = useQuery({
@@ -167,7 +175,7 @@ export default function EstudiantePlanPage() {
         {/* Tareas */}
         <div className="space-y-2">
           <h2 className="text-sm font-semibold text-foreground px-1">
-            Actividades del plan ({plan.tasks?.length ?? 0})
+            Tareas del plan ({plan.tasks?.length ?? 0})
           </h2>
           {plan.tasks && plan.tasks.length > 0 ? (
             plan.tasks.map((task, index) => (
@@ -208,6 +216,12 @@ export default function EstudiantePlanPage() {
                       <p className="text-xs text-muted-foreground mt-1">
                         Acordada el {formatDate(task.agreedDate ?? task.createdAt)}
                       </p>
+                      <button
+                        className="no-print mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+                        onClick={() => setDialog({ open: true, actividadId: task.id, experiencia: null })}
+                      >
+                        <MessageSquareText className="h-3.5 w-3.5" /> Contar mi experiencia
+                      </button>
                     </div>
                   </div>
                 </CardContent>
@@ -216,11 +230,25 @@ export default function EstudiantePlanPage() {
           ) : (
             <Card>
               <CardContent className="py-6 text-center text-sm text-muted-foreground">
-                Tu plan aún no tiene actividades.
+                Tu plan aún no tiene tareas.
               </CardContent>
             </Card>
           )}
         </div>
+
+        {/* Experiencias que el estudiante cuenta sobre sus actividades */}
+        <ExperienciasSection
+          onNueva={() => setDialog({ open: true, actividadId: undefined, experiencia: null })}
+          onCorregir={(e) => setDialog({ open: true, experiencia: e })}
+        />
+
+        <ExperienciaDialog
+          open={dialog.open}
+          onOpenChange={(o) => setDialog((d) => ({ ...d, open: o }))}
+          actividades={(plan.tasks ?? []).map((t) => ({ id: t.id, name: t.name }))}
+          actividadId={dialog.actividadId}
+          experiencia={dialog.experiencia}
+        />
 
         {/* Pie de página — solo al imprimir */}
         <div
