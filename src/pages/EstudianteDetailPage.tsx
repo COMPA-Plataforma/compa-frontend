@@ -20,6 +20,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { RiskLevelSection } from "@/components/risk-level/RiskLevelSection";
 import { AtencionSection } from "@/components/atencion/AtencionSection";
 import { SeguimientoSection } from "@/components/seguimientos/SeguimientoSection";
+import { ExperienciasEstudianteSection } from "@/components/experiencias/ExperienciasEstudianteSection";
 import { atencionService } from "@/services/atencionService";
 import { formatFecha } from "@/lib/dates";
 import { frecuenciaTexto } from "@/lib/habitos";
@@ -113,7 +114,7 @@ export default function EstudianteDetailPage() {
     mutationFn: ({ planId, taskId }: { planId: number; taskId: number }) =>
       habitPlanService.deleteTask(estudianteId, planId, taskId),
     onSuccess: () => {
-      toast.success("Actividad eliminada");
+      toast.success("Tarea eliminada");
       queryClient.invalidateQueries({ queryKey: ["habitPlans", estudianteId] });
     },
   });
@@ -193,8 +194,9 @@ export default function EstudianteDetailPage() {
           <TabsTrigger value="atencion">Atención</TabsTrigger>
           <TabsTrigger value="seguimientos">Seguimientos</TabsTrigger>
           <TabsTrigger value="habits">Planes de Hábitos</TabsTrigger>
+          <TabsTrigger value="experiencias">Experiencias</TabsTrigger>
           <TabsTrigger value="consents">Consentimientos</TabsTrigger>
-          <TabsTrigger value="today-tasks">Actividades de Hoy</TabsTrigger>
+          <TabsTrigger value="today-tasks">Tareas de Hoy</TabsTrigger>
         </TabsList>
 
         {/* ── Información Clínica ── */}
@@ -277,6 +279,11 @@ export default function EstudianteDetailPage() {
           <AtencionSection estudianteId={estudianteId} />
         </TabsContent>
 
+        {/* ── Experiencias que el estudiante reportó sobre su plan ── */}
+        <TabsContent value="experiencias" className="space-y-4 mt-4">
+          <ExperienciasEstudianteSection estudianteId={estudianteId} />
+        </TabsContent>
+
         {/* ── Seguimientos de sesión ── */}
         <TabsContent value="seguimientos" className="space-y-4 mt-4">
           <SeguimientoSection estudianteId={estudianteId} />
@@ -341,7 +348,7 @@ export default function EstudianteDetailPage() {
                       )}
                       {plan.status === "ACTIVO" && (
                         <Button variant="outline" size="sm" onClick={() => setAddTaskDialog({ open: true, planId: plan.id })}>
-                          <Plus className="mr-1 h-3.5 w-3.5" /> Agregar Actividad
+                          <Plus className="mr-1 h-3.5 w-3.5" /> Agregar Tarea
                         </Button>
                       )}
                       <Button variant="outline" size="sm"
@@ -353,7 +360,7 @@ export default function EstudianteDetailPage() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Actividad</TableHead>
+                            <TableHead>Tarea</TableHead>
                             <TableHead>Descripción</TableHead>
                             <TableHead>Prioridad</TableHead>
                             <TableHead>Fecha límite / frecuencia</TableHead>
@@ -397,7 +404,7 @@ export default function EstudianteDetailPage() {
                         </TableBody>
                       </Table>
                     ) : (
-                      <p className="text-sm text-muted-foreground">No hay actividades en este plan.</p>
+                      <p className="text-sm text-muted-foreground">No hay tareas en este plan.</p>
                     )}
                   </CardContent>
                 )}
@@ -462,7 +469,7 @@ export default function EstudianteDetailPage() {
           ) : todayTasks.length === 0 ? (
             <Card>
               <CardContent className="pt-6 text-center text-muted-foreground">
-                No hay actividades programadas para hoy.
+                No hay tareas programadas para hoy.
               </CardContent>
             </Card>
           ) : (
