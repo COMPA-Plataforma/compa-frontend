@@ -1,0 +1,1 @@
+export const MAX_EXPERIENCIA = 1000;
