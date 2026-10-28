@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { atencionService } from "@/services/atencionService";
-import { CAMPOS_ANAMNESIS, MAX_CAMPO, type CampoAnamnesis } from "@/lib/atencion";
+import { CAMPOS_ANAMNESIS, MAX_CAMPO, MAX_EPS, type CampoAnamnesis } from "@/lib/atencion";
 import type { Atencion } from "@/types";
 
 const MAX_OTRO = 200;
@@ -52,6 +53,9 @@ export function AtencionDialog({ open, onOpenChange, estudianteId, existing }: P
   const [textos, setTextos] = useState<Textos>(textosVacios());
   const [motivos, setMotivos] = useState<string[]>([]);
   const [motivoOtro, setMotivoOtro] = useState("");
+  // Afiliación a EPS: "" = sin dato, "si" = afiliado, "no" = no afiliado
+  const [afiliacion, setAfiliacion] = useState<"" | "si" | "no">("");
+  const [epsNombre, setEpsNombre] = useState("");
 
   const { data: catalogo = [] } = useQuery({
     queryKey: ["atencionMotivos"],
@@ -70,6 +74,8 @@ export function AtencionDialog({ open, onOpenChange, estudianteId, existing }: P
     );
     setMotivos(existing?.motivos.map((m) => m.codigo) ?? []);
     setMotivoOtro(existing?.motivoOtro ?? "");
+    setAfiliacion(existing?.afiliadoEps === true ? "si" : existing?.afiliadoEps === false ? "no" : "");
+    setEpsNombre(existing?.epsNombre ?? "");
   }, [open, existing]);
 
   // ¿Hay cambios respecto a lo guardado? (el backend rechaza guardar sin cambios)
@@ -80,9 +86,11 @@ export function AtencionDialog({ open, onOpenChange, estudianteId, existing }: P
     return (
       CAMPOS_ANAMNESIS.some((c) => textos[c.key].trim() !== (existing[c.key] ?? "")) ||
       antes !== ahora ||
-      motivoOtro.trim() !== (existing.motivoOtro ?? "")
+      motivoOtro.trim() !== (existing.motivoOtro ?? "") ||
+      afiliacion !== (existing.afiliadoEps === true ? "si" : existing.afiliadoEps === false ? "no" : "") ||
+      (afiliacion === "si" && epsNombre.trim() !== (existing.epsNombre ?? ""))
     );
-  }, [existing, textos, motivos, motivoOtro]);
+  }, [existing, textos, motivos, motivoOtro, afiliacion, epsNombre]);
 
   const toggleMotivo = (codigo: string, checked: boolean) =>
     setMotivos((prev) => (checked ? [...prev, codigo] : prev.filter((c) => c !== codigo)));
@@ -95,6 +103,8 @@ export function AtencionDialog({ open, onOpenChange, estudianteId, existing }: P
         ) as Textos),
         motivos,
         motivoOtro: motivoOtro.trim(),
+        // Sin dato: no se envía y el backend no cambia nada
+        ...(afiliacion === "" ? {} : { afiliadoEps: afiliacion === "si", epsNombre: afiliacion === "si" ? epsNombre.trim() : "" }),
       };
       return existing
         ? atencionService.update(estudianteId, payload)
@@ -108,7 +118,8 @@ export function AtencionDialog({ open, onOpenChange, estudianteId, existing }: P
     },
   });
 
-  const canSave = textos.entrevistaRecepcion.trim().length > 0 && dirty && !mutation.isPending;
+  const epsIncompleta = afiliacion === "si" && epsNombre.trim().length === 0;
+  const canSave = textos.entrevistaRecepcion.trim().length > 0 && !epsIncompleta && dirty && !mutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -136,6 +147,34 @@ export function AtencionDialog({ open, onOpenChange, estudianteId, existing }: P
                 onChange={(v) => setTextos((prev) => ({ ...prev, [c.key]: v }))}
               />
             ))}
+          </div>
+
+          <div className="space-y-2">
+            <Label>Afiliación a EPS<span className="text-muted-foreground font-normal"> (opcional)</span></Label>
+            <RadioGroup
+              value={afiliacion}
+              onValueChange={(v) => setAfiliacion(v as "" | "si" | "no")}
+              className="flex flex-wrap gap-4"
+            >
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <RadioGroupItem value="si" id="eps-si" /> Afiliado
+              </label>
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <RadioGroupItem value="no" id="eps-no" /> No afiliado
+              </label>
+            </RadioGroup>
+            {afiliacion === "si" && (
+              <div className="space-y-1">
+                <Label htmlFor="epsNombre" className="text-sm">¿A cuál EPS? *</Label>
+                <Input
+                  id="epsNombre"
+                  maxLength={MAX_EPS}
+                  value={epsNombre}
+                  onChange={(e) => setEpsNombre(e.target.value)}
+                  placeholder="Nombre de la EPS"
+                />
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">

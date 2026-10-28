@@ -14,3 +14,6 @@ export type CampoAnamnesis = (typeof CAMPOS_ANAMNESIS)[number]["key"];
 
 // Máximo de caracteres por campo (el mismo que valida el backend)
 export const MAX_CAMPO = 5000;
+
+// Máximo de caracteres del nombre de la EPS (el mismo que valida el backend)
+export const MAX_EPS = 120;
