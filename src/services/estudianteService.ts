@@ -1,18 +1,18 @@
 import api from "@/lib/axiosConfig";
 import type { Estudiante, EstudianteListDTO, Guardian, DocumentType } from "@/types";
 
-export interface CreateEstudiantePayload {
+export interface CreateEstudianteAccountPayload {
   name: string;
   lastName: string;
-  documentType: DocumentType;
-  identityDocument: string;
   email: string;
-  phoneNumber: string;
-  guardian?: Omit<Guardian, "id">;
+  identityDocument: string;
+  documentType: string;
+  phoneNumber?: string;
+  acudiente?: Omit<Guardian, "id">;
 }
 
 export const estudianteService = {
-  create: (data: CreateEstudiantePayload) =>
+  create: (data: CreateEstudianteAccountPayload) =>
     api.post<Estudiante>("/api/estudiantes", data).then((r) => r.data),
 
   listActive: () => api.get<Estudiante[]>("/api/estudiantes").then((r) => r.data),
@@ -34,7 +34,7 @@ export const estudianteService = {
     api.patch<Estudiante>(`/api/estudiantes/${id}/reactivate`, data || {}).then((r) => r.data),
 
     // Crear cuenta de estudiante con email — el backend envía credenciales por correo
-    createAccount: (orientadorId: number, data: { name: string; lastName: string; email: string; identityDocument: string; documentType: string }) =>
+    createAccount: (orientadorId: number, data: CreateEstudianteAccountPayload) =>
   api.post<Estudiante>(`/api/estudiantes/by-orientador/${orientadorId}`, data).then((r) => r.data),
 
 
