@@ -200,6 +200,8 @@ export interface Atencion {
   aspectosPsicosociales: string | null;
   relacionesFamiliares: string | null;
   observacionesSalud: string | null;
+  afiliadoEps: boolean | null;   // null = sin dato
+  epsNombre: string | null;
   motivos: MotivoItem[];
   motivoOtro: string | null;
   impresionDiagnostica: string | null;
@@ -219,6 +221,8 @@ export interface AtencionVersion {
   aspectosPsicosociales: string | null;
   relacionesFamiliares: string | null;
   observacionesSalud: string | null;
+  afiliadoEps: boolean | null;   // null = sin dato
+  epsNombre: string | null;
   motivos: MotivoItem[];
   motivoOtro: string | null;
   impresionDiagnostica: string | null;
@@ -231,6 +235,8 @@ export interface AtencionPayload {
   aspectosPsicosociales: string;
   relacionesFamiliares: string;
   observacionesSalud: string;
+  afiliadoEps?: boolean;         // si no se envía, no cambia
+  epsNombre?: string;
   motivos: string[];
   motivoOtro: string;
   impresionDiagnostica: string;

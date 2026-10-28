@@ -32,6 +32,13 @@ function Motivos({ motivos, otro }: { motivos: MotivoItem[]; otro: string | null
   );
 }
 
+// Texto de la afiliación a EPS: "Afiliado: Sura", "No afiliado" o "—" si no se ha registrado
+function afiliacionTexto(d: Atencion | AtencionVersion) {
+  if (d.afiliadoEps === true) return `Afiliado: ${d.epsNombre ?? "—"}`;
+  if (d.afiliadoEps === false) return "No afiliado";
+  return "—";
+}
+
 // Muestra los campos de anamnesis y la impresión diagnóstica (vacíos se ven como "—").
 // Los motivos de consulta van entre la anamnesis y la impresión diagnóstica.
 function Campos({ datos, className }: { datos: Atencion | AtencionVersion; className?: string }) {
@@ -44,6 +51,10 @@ function Campos({ datos, className }: { datos: Atencion | AtencionVersion; class
   return (
     <>
       {CAMPOS_ANAMNESIS.filter((c) => c.key !== "impresionDiagnostica").map(campo)}
+      <div>
+        <p className="text-sm text-muted-foreground">Afiliación a EPS</p>
+        <p className={className}>{afiliacionTexto(datos)}</p>
+      </div>
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Motivos de consulta</p>
         <Motivos motivos={datos.motivos} otro={datos.motivoOtro} />

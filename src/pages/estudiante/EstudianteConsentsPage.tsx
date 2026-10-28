@@ -7,7 +7,6 @@ import { CheckCircle2, FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { estudianteMeService } from "@/services/estudianteMeService";
 import { consentTipoLabel, formatConsentVersion } from "@/lib/consents";
-
 export default function EstudianteConsentsPage() {
   const queryClient = useQueryClient();
 
