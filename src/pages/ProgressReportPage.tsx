@@ -8,6 +8,7 @@ import {
   HealthStatus,
 } from "@/services/progressReportService";
 import { authService } from "@/services/authService";
+import { AdherenciaPlanCard } from "@/components/adherencia/AdherenciaPlanCard";
 import { Loader2, Printer, Plus, TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 const riskLabel: Record<RiskLevel, string> = {
@@ -201,6 +202,9 @@ export default function ProgressReportPage(props: Props = {}) {
               </div>
             ))}
           </div>
+
+          {/* Adherencia al plan: informado vs validado y estado de ánimo */}
+          <AdherenciaPlanCard estudianteId={estudianteId} />
 
           {/* Gráfico últimos 7 días */}
           <div style={{ background: "hsl(210, 20%, 98%)", borderRadius: "10px", padding: "1.25rem", border: "1px solid hsl(214, 20%, 90%)", marginBottom: "1.75rem" }}>

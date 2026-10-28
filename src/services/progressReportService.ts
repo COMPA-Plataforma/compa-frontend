@@ -23,6 +23,33 @@ export interface ConclusionDTO {
   createdAt: string;
 }
 
+export interface MoodCountDTO {
+  state: string;
+  label: string;
+  icon: string;
+  count: number;
+}
+
+// Adherencia al plan en un periodo: lo que informó el estudiante y lo que validó el psicoorientador
+export interface AdherenciaDTO {
+  from: string;                    // yyyy-MM-dd
+  to: string;
+  hasActivePlan: boolean;
+  hasInfo: boolean;                // false si en el periodo no hay actividades informadas ni ánimo
+  scheduled: number;
+  reportedCompleted: number;
+  reportedPercentage: number | null;
+  validated: number;
+  validatedPercentage: number | null;
+  toValidate: number;
+  notPerformed: number;
+  moodCheckIns: number;
+  predominantMood: string | null;
+  predominantMoodLabel: string | null;
+  predominantMoodIcon: string | null;
+  mood: MoodCountDTO[];
+}
+
 export interface ProgressReport {
   estudianteFullName: string;
   orientadorFullName: string;
@@ -38,12 +65,14 @@ export interface ProgressReport {
   currentStatusDate: string | null;
   habitPlans: HabitPlanDTO[];
   conclusions: ConclusionDTO[];
+  adherencia: AdherenciaDTO;
 }
 
 export const progressReportService = {
-  getReport: (estudianteId: number) =>
+  // from/to (yyyy-MM-dd) filtran la adherencia y el estado de ánimo
+  getReport: (estudianteId: number, from?: string, to?: string) =>
     api
-      .get<ProgressReport>(`/api/estudiantes/${estudianteId}/progress-report`)
+      .get<ProgressReport>(`/api/estudiantes/${estudianteId}/progress-report`, { params: { from, to } })
       .then((r) => r.data),
 
   addConclusion: (estudianteId: number, content: string, orientadorId: number) =>
