@@ -293,3 +293,26 @@ export interface ExperienciaPayload {
   actividadId?: number;        // obligatoria al registrar; al corregir no cambia
   texto: string;
 }
+
+// Validación del psicoorientador sobre lo que el estudiante informó de una actividad
+export type EstadoValidacion = "VALIDADA" | "NO_REALIZADA";
+ 
+export interface ActividadInformada {
+  id: number;                          // id del registro: es el que se envía para validar
+  actividadId: number;
+  actividadNombre: string;
+  fecha: string;                       // yyyy-MM-dd, día del check-in
+  informadaCumplida: boolean;
+  barrera: string | null;
+  barreraEtiqueta: string | null;
+  comentario: string | null;
+  estadoValidacion: EstadoValidacion | null;   // null = aún sin validar
+  validadaEn: string | null;
+  validadaPorNombre: string | null;
+}
+ 
+export interface ValidacionesResponse {
+  ultimaSesion: string | null;         // fecha del último seguimiento no anulado
+  desde: string | null;
+  actividades: ActividadInformada[];
+}
