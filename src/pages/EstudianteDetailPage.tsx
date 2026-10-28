@@ -20,6 +20,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { RiskLevelSection } from "@/components/risk-level/RiskLevelSection";
 import { AtencionSection } from "@/components/atencion/AtencionSection";
 import { SeguimientoSection } from "@/components/seguimientos/SeguimientoSection";
+import { ValidacionActividadesSection } from "@/components/validacion/ValidacionActividadesSection";
 import { ExperienciasEstudianteSection } from "@/components/experiencias/ExperienciasEstudianteSection";
 import { AcudienteSection } from "@/components/acudiente/AcudienteSection";
 import { atencionService } from "@/services/atencionService";
@@ -28,6 +29,11 @@ import { frecuenciaTexto } from "@/lib/habitos";
 import axios from "axios";
 import { consentService } from "@/services/consentService";
 import { checkInService } from "@/services/checkInService";
+
+// Secciones dentro de cada pestaña principal: botones tipo "pill"
+const subList = "h-auto bg-transparent p-0 gap-2 justify-start flex-wrap";
+const subTrigger =
+  "rounded-full border px-4 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary";
 
 export default function EstudianteDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -188,240 +194,323 @@ export default function EstudianteDetailPage() {
       </Card>
 
       {/* Los estudiantes con tarjeta de identidad son menores: se muestra su acudiente y la autorización */}
-      {estudiante.documentType === "TARJETA_DE_IDENTIDAD" && <AcudienteSection estudianteId={estudianteId} />}
+      {estudiante.documentType === "TARJETA_DE_IDENTIDAD" && (
+        <AcudienteSection estudianteId={estudianteId}
+        />
+      )}
 
       <RiskLevelSection estudianteId={estudianteId} />
 
-      <Tabs defaultValue="clinical">
+      <Tabs defaultValue="info">
         <TabsList>
-          <TabsTrigger value="clinical">Información Clínica</TabsTrigger>
-          <TabsTrigger value="atencion">Atención</TabsTrigger>
-          <TabsTrigger value="seguimientos">Seguimientos</TabsTrigger>
-          <TabsTrigger value="habits">Planes de Hábitos</TabsTrigger>
-          <TabsTrigger value="experiencias">Experiencias</TabsTrigger>
+          <TabsTrigger value="info">Información</TabsTrigger>
+          <TabsTrigger value="sesion">Sesión</TabsTrigger>
+          <TabsTrigger value="plan">Plan</TabsTrigger>
           <TabsTrigger value="consents">Consentimientos</TabsTrigger>
-          <TabsTrigger value="today-tasks">Tareas de Hoy</TabsTrigger>
         </TabsList>
 
-        {/* ── Información Clínica ── */}
-        <TabsContent value="clinical" className="space-y-4 mt-4">
-          {clinicalLoading ? (
-            <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
-          ) : clinicalInfo ? (
-            <Card>
-              <CardContent className="pt-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Condición Principal</p>
-                    <p className="font-medium">{clinicalInfo.mainCondition}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Condiciones Secundarias</p>
-                    <p className="font-medium">{clinicalInfo.secondaryConditions || "—"}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Estado de Salud</p>
-                    <StatusBadge status={clinicalInfo.healthStatus} />
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => setClinicalDialog(true)}>Editar</Button>
-                  <Button variant="outline" size="sm" onClick={() => setHealthStatusDialog(true)}>Actualizar Estado</Button>
-                </div>
-                <Collapsible open={historyOpen} onOpenChange={setHistoryOpen}>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-1">
-                      {historyOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                      Historial de Estados
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Estado Anterior</TableHead>
-                          <TableHead>Nuevo Estado</TableHead>
-                          <TableHead>Razón</TableHead>
-                          <TableHead>Fecha</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {healthHistory.length === 0 ? (
-                          <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">Sin historial</TableCell></TableRow>
-                        ) : (
-                          healthHistory.map((h) => (
-                            <TableRow key={h.id}>
-                              <TableCell><StatusBadge status={h.previousStatus} /></TableCell>
-                              <TableCell><StatusBadge status={h.newStatus} /></TableCell>
-                              <TableCell>{h.reason}</TableCell>
-                              <TableCell>{format(new Date(h.changedAt), "dd/MM/yyyy HH:mm")}</TableCell>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </CollapsibleContent>
-                </Collapsible>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardContent className="pt-6 text-center space-y-3">
-                <p className="text-muted-foreground">No hay información clínica registrada.</p>
-                <Button onClick={() => setClinicalDialog(true)}>
-                  <Plus className="mr-2 h-4 w-4" /> Registrar Información Clínica
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-          <ClinicalInfoDialog open={clinicalDialog} onOpenChange={setClinicalDialog} estudianteId={estudianteId} existing={clinicalInfo ?? null} />
-          <UpdateHealthStatusDialog open={healthStatusDialog} onOpenChange={setHealthStatusDialog} estudianteId={estudianteId} />
-        </TabsContent>
+        {/* ── Información: ficha clínica y atención ── */}
+        <TabsContent value="info" className="mt-4">
+          <Tabs defaultValue="clinical">
+            <TabsList className={subList}>
+            <TabsTrigger value="clinical" className={subTrigger}>Información Clínica</TabsTrigger>
+            <TabsTrigger value="atencion" className={subTrigger}>Atención</TabsTrigger>
+            </TabsList>
 
-        {/* ── Atención (anamnesis) ── */}
-        <TabsContent value="atencion" className="space-y-4 mt-4">
-          <AtencionSection estudianteId={estudianteId} />
-        </TabsContent>
-
-        {/* ── Experiencias que el estudiante reportó sobre su plan ── */}
-        <TabsContent value="experiencias" className="space-y-4 mt-4">
-          <ExperienciasEstudianteSection estudianteId={estudianteId} />
-        </TabsContent>
-
-        {/* ── Seguimientos de sesión ── */}
-        <TabsContent value="seguimientos" className="space-y-4 mt-4">
-          <SeguimientoSection estudianteId={estudianteId} />
-        </TabsContent>
-
-        {/* ── Planes de Hábitos ── */}
-        <TabsContent value="habits" className="space-y-4 mt-4">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Planes de Hábitos</h3>
-            <Button
-              onClick={() => setHabitPlanDialog(true)}
-              disabled={atencionLoading || plansLoading || sinAtencion || tienePlanActivo}
-            >
-              <Plus className="mr-2 h-4 w-4" /> Nuevo Plan
-            </Button>
-          </div>
-          {sinAtencion && (
-            <p className="text-sm text-muted-foreground">
-              Para crear el plan primero registra la atención del estudiante (pestaña Atención).
-            </p>
-          )}
-          {!sinAtencion && tienePlanActivo && (
-            <p className="text-sm text-muted-foreground">
-              El estudiante ya tiene un plan activo. Desactívalo para crear uno nuevo.
-            </p>
-          )}
-          {plansLoading ? (
-            <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
-          ) : habitPlans.length === 0 ? (
-            <Card>
-              <CardContent className="pt-6 text-center text-muted-foreground">
-                No hay planes de hábitos.
-              </CardContent>
-            </Card>
-          ) : (
-            habitPlans.map((plan) => (
-              <Card key={plan.id}>
-                <CardHeader className="cursor-pointer" onClick={() => togglePlan(plan.id)}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="text-base">{plan.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground mt-1">{plan.description}</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {formatFecha(plan.startDate)}
-                        {plan.endDate ? ` — ${formatFecha(plan.endDate)}` : ""}
-                        {" · "}Acordado el {formatFecha(plan.agreedDate ?? plan.createdAt)}
-                      </p>
+            {/* ── Información Clínica ── */}
+            <TabsContent value="clinical" className="space-y-4 mt-4">
+              {clinicalLoading ? (
+                <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+              ) : clinicalInfo ? (
+                <Card>
+                  <CardContent className="pt-6 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Condición Principal</p>
+                        <p className="font-medium">{clinicalInfo.mainCondition}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Condiciones Secundarias</p>
+                        <p className="font-medium">{clinicalInfo.secondaryConditions || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Estado de Salud</p>
+                        <StatusBadge status={clinicalInfo.healthStatus} />
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <StatusBadge status={plan.status} />
-                      {expandedPlans.has(plan.id) ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                    </div>
-                  </div>
-                </CardHeader>
-                {expandedPlans.has(plan.id) && (
-                  <CardContent className="space-y-3">
                     <div className="flex gap-2">
-                      {plan.status === "ACTIVO" && (
-                        <Button variant="destructive" size="sm" onClick={() => deactivatePlan.mutate(plan.id)}>
-                          <XCircle className="mr-1 h-3.5 w-3.5" /> Desactivar Plan
-                        </Button>
-                      )}
-                      {plan.status === "ACTIVO" && (
-                        <Button variant="outline" size="sm" onClick={() => setAddTaskDialog({ open: true, planId: plan.id })}>
-                          <Plus className="mr-1 h-3.5 w-3.5" /> Agregar Tarea
-                        </Button>
-                      )}
-                      <Button variant="outline" size="sm"
-                        onClick={() => navigate(`/estudiantes/${estudianteId}/plans/${plan.id}/rules`)}>
-                        <Activity className="mr-1 h-3.5 w-3.5" /> Ver Reglas
-                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => setClinicalDialog(true)}>Editar</Button>
+                      <Button variant="outline" size="sm" onClick={() => setHealthStatusDialog(true)}>Actualizar Estado</Button>
                     </div>
-                    {plan.tasks && plan.tasks.length > 0 ? (
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Tarea</TableHead>
-                            <TableHead>Descripción</TableHead>
-                            <TableHead>Prioridad</TableHead>
-                            <TableHead>Fecha límite / frecuencia</TableHead>
-                            <TableHead>Acordada</TableHead>
-                            <TableHead className="text-right">Acciones</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {plan.tasks.map((task) => (
-                            <TableRow key={task.id}>
-                              <TableCell className="font-medium">{task.name}</TableCell>
-                              <TableCell>{task.description}</TableCell>
-                              <TableCell>
-                                <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                                  task.priority === "ALTA" ? "bg-red-100 text-red-700"
-                                  : task.priority === "MEDIA" ? "bg-yellow-100 text-yellow-700"
-                                  : "bg-green-100 text-green-700"
-                                }`}>
-                                  {task.priority ?? "—"}
-                                </span>
-                              </TableCell>
-                              <TableCell className="text-sm">
-                                {task.dueDate
-                                  ? `Hasta el ${formatFecha(task.dueDate)}`
-                                  : frecuenciaTexto(task) || "—"}
-                              </TableCell>
-                              <TableCell className="text-sm">
-                                {formatFecha(task.agreedDate ?? task.createdAt)}
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => deleteTask.mutate({ planId: plan.id, taskId: task.id })}
-                                >
-                                  <Trash2 className="h-4 w-4 text-destructive" />
-                                </Button>
-                              </TableCell>
+                    <Collapsible open={historyOpen} onOpenChange={setHistoryOpen}>
+                      <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="sm" className="gap-1">
+                          {historyOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                          Historial de Estados
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Estado Anterior</TableHead>
+                              <TableHead>Nuevo Estado</TableHead>
+                              <TableHead>Razón</TableHead>
+                              <TableHead>Fecha</TableHead>
                             </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">No hay tareas en este plan.</p>
-                    )}
+                          </TableHeader>
+                          <TableBody>
+                            {healthHistory.length === 0 ? (
+                              <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">Sin historial</TableCell></TableRow>
+                            ) : (
+                              healthHistory.map((h) => (
+                                <TableRow key={h.id}>
+                                  <TableCell><StatusBadge status={h.previousStatus} /></TableCell>
+                                  <TableCell><StatusBadge status={h.newStatus} /></TableCell>
+                                  <TableCell>{h.reason}</TableCell>
+                                  <TableCell>{format(new Date(h.changedAt), "dd/MM/yyyy HH:mm")}</TableCell>
+                                </TableRow>
+                              ))
+                            )}
+                          </TableBody>
+                        </Table>
+                      </CollapsibleContent>
+                    </Collapsible>
                   </CardContent>
-                )}
-              </Card>
-            ))
-          )}
-          <CreateHabitPlanDialog open={habitPlanDialog} onOpenChange={setHabitPlanDialog} estudianteId={estudianteId} />
-          <AddTaskDialog
-            open={addTaskDialog.open}
-            onOpenChange={(open) => setAddTaskDialog({ ...addTaskDialog, open })}
-            estudianteId={estudianteId}
-            planId={addTaskDialog.planId}
-          />
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="pt-6 text-center space-y-3">
+                    <p className="text-muted-foreground">No hay información clínica registrada.</p>
+                    <Button onClick={() => setClinicalDialog(true)}>
+                      <Plus className="mr-2 h-4 w-4" /> Registrar Información Clínica
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+              <ClinicalInfoDialog open={clinicalDialog} onOpenChange={setClinicalDialog} estudianteId={estudianteId} existing={clinicalInfo ?? null} />
+              <UpdateHealthStatusDialog open={healthStatusDialog} onOpenChange={setHealthStatusDialog} estudianteId={estudianteId} />
+            </TabsContent>
+
+            {/* ── Atención (anamnesis) ── */}
+            <TabsContent value="atencion" className="space-y-4 mt-4">
+              <AtencionSection estudianteId={estudianteId} />
+            </TabsContent>
+          </Tabs>
+        </TabsContent>
+
+        {/* ── Sesión: lo que se trabaja en consulta ── */}
+        <TabsContent value="sesion" className="mt-4">
+          <Tabs defaultValue="seguimientos">
+            <TabsList className={subList}>
+            <TabsTrigger value="seguimientos" className={subTrigger}>Seguimientos</TabsTrigger>
+            <TabsTrigger value="validacion" className={subTrigger}>Validación</TabsTrigger>
+            </TabsList>
+
+            {/* ── Seguimientos de sesión ── */}
+            <TabsContent value="seguimientos" className="space-y-4 mt-4">
+              <SeguimientoSection estudianteId={estudianteId} />
+            </TabsContent>
+
+            {/* ── Validar en consulta lo que el estudiante informó ── */}
+            <TabsContent value="validacion" className="space-y-4 mt-4">
+              <ValidacionActividadesSection estudianteId={estudianteId} />
+            </TabsContent>
+          </Tabs>
+        </TabsContent>
+
+        {/* ── Plan de acompañamiento ── */}
+        <TabsContent value="plan" className="mt-4">
+          <Tabs defaultValue="habits">
+            <TabsList className={subList}>
+            <TabsTrigger value="habits" className={subTrigger}>Planes de Hábitos</TabsTrigger>
+            <TabsTrigger value="today-tasks" className={subTrigger}>Tareas de Hoy</TabsTrigger>
+            <TabsTrigger value="experiencias" className={subTrigger}>Experiencias</TabsTrigger>
+            </TabsList>
+
+            {/* ── Planes de Hábitos ── */}
+            <TabsContent value="habits" className="space-y-4 mt-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Planes de Hábitos</h3>
+                <Button
+                  onClick={() => setHabitPlanDialog(true)}
+                  disabled={atencionLoading || plansLoading || sinAtencion || tienePlanActivo}
+                >
+                  <Plus className="mr-2 h-4 w-4" /> Nuevo Plan
+                </Button>
+              </div>
+              {sinAtencion && (
+                <p className="text-sm text-muted-foreground">
+                  Para crear el plan primero registra la atención del estudiante (pestaña Atención).
+                </p>
+              )}
+              {!sinAtencion && tienePlanActivo && (
+                <p className="text-sm text-muted-foreground">
+                  El estudiante ya tiene un plan activo. Desactívalo para crear uno nuevo.
+                </p>
+              )}
+              {plansLoading ? (
+                <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+              ) : habitPlans.length === 0 ? (
+                <Card>
+                  <CardContent className="pt-6 text-center text-muted-foreground">
+                    No hay planes de hábitos.
+                  </CardContent>
+                </Card>
+              ) : (
+                habitPlans.map((plan) => (
+                  <Card key={plan.id}>
+                    <CardHeader className="cursor-pointer" onClick={() => togglePlan(plan.id)}>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <CardTitle className="text-base">{plan.name}</CardTitle>
+                          <p className="text-sm text-muted-foreground mt-1">{plan.description}</p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {formatFecha(plan.startDate)}
+                            {plan.endDate ? ` — ${formatFecha(plan.endDate)}` : ""}
+                            {" · "}Acordado el {formatFecha(plan.agreedDate ?? plan.createdAt)}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <StatusBadge status={plan.status} />
+                          {expandedPlans.has(plan.id) ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                        </div>
+                      </div>
+                    </CardHeader>
+                    {expandedPlans.has(plan.id) && (
+                      <CardContent className="space-y-3">
+                        <div className="flex gap-2">
+                          {plan.status === "ACTIVO" && (
+                            <Button variant="destructive" size="sm" onClick={() => deactivatePlan.mutate(plan.id)}>
+                              <XCircle className="mr-1 h-3.5 w-3.5" /> Desactivar Plan
+                            </Button>
+                          )}
+                          {plan.status === "ACTIVO" && (
+                            <Button variant="outline" size="sm" onClick={() => setAddTaskDialog({ open: true, planId: plan.id })}>
+                              <Plus className="mr-1 h-3.5 w-3.5" /> Agregar Tarea
+                            </Button>
+                          )}
+                          <Button variant="outline" size="sm"
+                            onClick={() => navigate(`/estudiantes/${estudianteId}/plans/${plan.id}/rules`)}>
+                            <Activity className="mr-1 h-3.5 w-3.5" /> Ver Reglas
+                          </Button>
+                        </div>
+                        {plan.tasks && plan.tasks.length > 0 ? (
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Tarea</TableHead>
+                                <TableHead>Descripción</TableHead>
+                                <TableHead>Prioridad</TableHead>
+                                <TableHead>Fecha límite / frecuencia</TableHead>
+                                <TableHead>Acordada</TableHead>
+                                <TableHead className="text-right">Acciones</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {plan.tasks.map((task) => (
+                                <TableRow key={task.id}>
+                                  <TableCell className="font-medium">{task.name}</TableCell>
+                                  <TableCell>{task.description}</TableCell>
+                                  <TableCell>
+                                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                                      task.priority === "ALTA" ? "bg-red-100 text-red-700"
+                                      : task.priority === "MEDIA" ? "bg-yellow-100 text-yellow-700"
+                                      : "bg-green-100 text-green-700"
+                                    }`}>
+                                      {task.priority ?? "—"}
+                                    </span>
+                                  </TableCell>
+                                  <TableCell className="text-sm">
+                                    {task.dueDate
+                                      ? `Hasta el ${formatFecha(task.dueDate)}`
+                                      : frecuenciaTexto(task) || "—"}
+                                  </TableCell>
+                                  <TableCell className="text-sm">
+                                    {formatFecha(task.agreedDate ?? task.createdAt)}
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => deleteTask.mutate({ planId: plan.id, taskId: task.id })}
+                                    >
+                                      <Trash2 className="h-4 w-4 text-destructive" />
+                                    </Button>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">No hay tareas en este plan.</p>
+                        )}
+                      </CardContent>
+                    )}
+                  </Card>
+                ))
+              )}
+              <CreateHabitPlanDialog open={habitPlanDialog} onOpenChange={setHabitPlanDialog} estudianteId={estudianteId} />
+              <AddTaskDialog
+                open={addTaskDialog.open}
+                onOpenChange={(open) => setAddTaskDialog({ ...addTaskDialog, open })}
+                estudianteId={estudianteId}
+                planId={addTaskDialog.planId}
+              />
+            </TabsContent>
+
+            {/* ── Tareas de Hoy ── */}
+            <TabsContent value="today-tasks" className="space-y-4 mt-4">
+              {tasksLoading ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : todayTasks.length === 0 ? (
+                <Card>
+                  <CardContent className="pt-6 text-center text-muted-foreground">
+                    No hay tareas programadas para hoy.
+                  </CardContent>
+                </Card>
+              ) : (
+                todayTasks.map((task) => {
+                  const completed = todayCheckIn?.tasks?.some(
+                    t => t.taskId === task.id && t.completed
+                  ) ?? false;
+                  return (
+                    <Card key={task.id}>
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <CardTitle className="text-base">{task.name}</CardTitle>
+                            <p className="text-sm text-muted-foreground mt-1">{task.description}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                              task.priority === "ALTA" ? "bg-red-100 text-red-700"
+                              : task.priority === "MEDIA" ? "bg-yellow-100 text-yellow-700"
+                              : "bg-green-100 text-green-700"
+                            }`}>
+                              {task.priority}
+                            </span>
+                            {completed ? (
+                              <span className="text-sm text-green-600 font-medium">✅ Registrada</span>
+                            ) : (
+                              <span className="text-sm text-yellow-600 font-medium">⏳ Pendiente</span>
+                            )}
+                          </div>
+                        </div>
+                      </CardHeader>
+                    </Card>
+                  );
+                })
+              )}
+            </TabsContent>
+
+            {/* ── Experiencias que el estudiante reportó sobre su plan ── */}
+            <TabsContent value="experiencias" className="space-y-4 mt-4">
+              <ExperienciasEstudianteSection estudianteId={estudianteId} />
+            </TabsContent>
+          </Tabs>
         </TabsContent>
 
         {/* ── Consentimientos ── */}
@@ -463,54 +552,6 @@ export default function EstudianteDetailPage() {
             ))
           )}
         </TabsContent>
-
-        {/* ── Tareas de Hoy ── */}
-        <TabsContent value="today-tasks" className="space-y-4 mt-4">
-          {tasksLoading ? (
-            <div className="flex justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
-            </div>
-          ) : todayTasks.length === 0 ? (
-            <Card>
-              <CardContent className="pt-6 text-center text-muted-foreground">
-                No hay tareas programadas para hoy.
-              </CardContent>
-            </Card>
-          ) : (
-            todayTasks.map((task) => {
-              const completed = todayCheckIn?.tasks?.some(
-                t => t.taskId === task.id && t.completed
-              ) ?? false;
-              return (
-                <Card key={task.id}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <CardTitle className="text-base">{task.name}</CardTitle>
-                        <p className="text-sm text-muted-foreground mt-1">{task.description}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                          task.priority === "ALTA" ? "bg-red-100 text-red-700"
-                          : task.priority === "MEDIA" ? "bg-yellow-100 text-yellow-700"
-                          : "bg-green-100 text-green-700"
-                        }`}>
-                          {task.priority}
-                        </span>
-                        {completed ? (
-                          <span className="text-sm text-green-600 font-medium">✅ Registrada</span>
-                        ) : (
-                          <span className="text-sm text-yellow-600 font-medium">⏳ Pendiente</span>
-                        )}
-                      </div>
-                    </div>
-                  </CardHeader>
-                </Card>
-              );
-            })
-          )}
-        </TabsContent>
-
       </Tabs>
     </div>
   );
