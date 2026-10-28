@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { estudianteMeService } from "@/services/estudianteMeService";
+import { LineaAlmaCard } from "@/components/LineaAlmaCard";
+
 
 const EMOTION_MAP: Record<string, { emoji: string; label: string }> = {
   MUY_MAL: { emoji: "😢", label: "Muy mal" },
@@ -143,6 +145,7 @@ export default function EstudianteHomePage() {
           </CardContent>
         </Card>
       )}
+      <LineaAlmaCard />
     </div>
   );
 }
