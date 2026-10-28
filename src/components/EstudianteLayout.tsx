@@ -7,6 +7,7 @@ import { useDarkMode } from "@/hooks/useDarkMode";
 import { NotificationBell } from "@/components/NotificationBell";
 import abrazo from "@/assets/abrazo.webp";
 
+
 const navItems = [
   { to: "/estudiante/home", label: "Inicio", icon: Home },
   { to: "/estudiante/check-in", label: "Check-in", icon: CheckCircle2 },
