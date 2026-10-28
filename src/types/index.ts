@@ -13,6 +13,7 @@ export interface Guardian {
   relationship: string;
   email?: string;
   phoneNumber?: string;
+  fechaAutorizacion?: string | null;
 }
 
 export interface ClinicalInfo {

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { estudianteService, type CreateEstudiantePayload } from "@/services/estudianteService";
+import { estudianteService, type CreateEstudianteAccountPayload } from "@/services/estudianteService";
 import { toast } from "sonner";
 import type { DocumentType } from "@/types";
 
@@ -42,7 +42,7 @@ export function CreateEstudianteDialog({ open, onOpenChange }: Props) {
 
   const mutation = useMutation({
     mutationFn: () => {
-      const payload: CreateEstudiantePayload = {
+      const payload: CreateEstudianteAccountPayload = {
         ...form,
         ...(needsGuardian ? { guardian } : {}),
       };

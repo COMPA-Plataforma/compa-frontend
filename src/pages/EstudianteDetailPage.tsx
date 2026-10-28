@@ -21,6 +21,7 @@ import { RiskLevelSection } from "@/components/risk-level/RiskLevelSection";
 import { AtencionSection } from "@/components/atencion/AtencionSection";
 import { SeguimientoSection } from "@/components/seguimientos/SeguimientoSection";
 import { ExperienciasEstudianteSection } from "@/components/experiencias/ExperienciasEstudianteSection";
+import { AcudienteSection } from "@/components/acudiente/AcudienteSection";
 import { atencionService } from "@/services/atencionService";
 import { formatFecha } from "@/lib/dates";
 import { frecuenciaTexto } from "@/lib/habitos";
@@ -185,6 +186,9 @@ export default function EstudianteDetailPage() {
           </div>
         </CardHeader>
       </Card>
+
+      {/* Los estudiantes con tarjeta de identidad son menores: se muestra su acudiente y la autorización */}
+      {estudiante.documentType === "TARJETA_DE_IDENTIDAD" && <AcudienteSection estudianteId={estudianteId} />}
 
       <RiskLevelSection estudianteId={estudianteId} />
 
