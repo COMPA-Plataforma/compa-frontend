@@ -18,6 +18,15 @@ export const ESTADOS_DERIVACION: { value: EstadoDerivacion; label: string }[] = 
   { value: "EN_ATENCION", label: "En atención" },
 ];
 
+// Qué significa cada estado para el estudiante, en lenguaje sencillo
+export const FRASE_ESTADO_DERIVACION: Record<EstadoDerivacion, string> = {
+  DERIVADO: "Tu psicoorientador envió tu caso a esta ruta de atención.",
+  EN_ESPERA: "Tu caso está en espera de respuesta.",
+  ACEPTADO: "Tu caso fue aceptado por la ruta de atención.",
+  CITA_ASIGNADA: "Ya tienes una cita asignada. Revisa los detalles con tu psicoorientador.",
+  EN_ATENCION: "Ya estás siendo atendido/a en esta ruta.",
+};
+
 // Fondos suaves por estado: "En espera" pide atención y "En atención" es el más avanzado
 export const ESTADO_DERIVACION_BADGE: Record<EstadoDerivacion, string> = {
   DERIVADO: "bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700",

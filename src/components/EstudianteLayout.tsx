@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { authService } from "@/services/authService";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Home, CheckCircle2, Calendar, ClipboardList, LogOut, FileText, BarChart2, Moon, Sun, ShieldCheck } from "lucide-react";
+import { Home, CheckCircle2, Calendar, ClipboardList, LogOut, FileText, BarChart2, Moon, Sun, ShieldCheck, Route } from "lucide-react";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { NotificationBell } from "@/components/NotificationBell";
 import abrazo from "@/assets/abrazo.webp";
@@ -14,6 +14,7 @@ const navItems = [
   { to: "/estudiante/history", label: "Historial", icon: Calendar },
   { to: "/estudiante/plan", label: "Mi plan", icon: ClipboardList },
   { to: "/estudiante/progress-report", label: "Mi progreso", icon: BarChart2 },
+  { to: "/estudiante/derivaciones", label: "Derivaciones", icon: Route },
 ];
 
 export default function EstudianteLayout({ children }: { children: React.ReactNode }) {
@@ -95,14 +96,14 @@ export default function EstudianteLayout({ children }: { children: React.ReactNo
 
       {/* Bottom navigation */}
       <nav id="estudiante-nav" className="fixed bottom-0 left-0 right-0 z-30 border-t bg-card shadow-lg">
-        <div className="grid grid-cols-5 max-w-2xl mx-auto">
+        <div className="grid grid-cols-6 max-w-2xl mx-auto">
           {navItems.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
               className={({ isActive }) =>
                 cn(
-                  "flex flex-col items-center justify-center gap-1 py-2.5 text-xs transition-colors",
+                  "flex min-w-0 flex-col items-center justify-center gap-1 py-2.5 text-[10px] sm:text-xs transition-colors",
                   isActive
                     ? "text-primary"
                     : "text-muted-foreground hover:text-foreground"
@@ -110,7 +111,7 @@ export default function EstudianteLayout({ children }: { children: React.ReactNo
               }
             >
               <Icon className="h-5 w-5" />
-              <span className="font-medium">{label}</span>
+              <span className="max-w-full truncate font-medium">{label}</span>
             </NavLink>
           ))}
         </div>

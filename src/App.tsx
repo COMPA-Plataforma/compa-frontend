@@ -26,6 +26,7 @@ import EstudiantePlanPage from "@/pages/estudiante/EstudiantePlanPage";
 import EstudianteConsentsPage from "@/pages/estudiante/EstudianteConsentsPage";
 import { authService } from "@/services/authService";
 import EstudianteProgressReportPage from "@/pages/estudiante/EstudianteProgressReportPage";
+import EstudianteDerivacionesPage from "@/pages/estudiante/EstudianteDerivacionesPage";
 import ProgressReportPage from "@/pages/ProgressReportPage";
 import AlertsPage from "@/pages/AlertsPage";
 import DerivacionesPage from "@/pages/DerivacionesPage";
@@ -85,6 +86,7 @@ const App = () => (
                     <Route path="plan" element={<EstudiantePlanPage />} />
                     <Route path="consents" element={<EstudianteConsentsPage />} />
                     <Route path="progress-report" element={<EstudianteProgressReportPage />} />
+                    <Route path="derivaciones" element={<EstudianteDerivacionesPage />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </EstudianteLayout>

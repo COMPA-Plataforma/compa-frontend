@@ -62,6 +62,23 @@ export interface DerivacionHistorial {
   novedades: NovedadDerivacion[]; // en orden cronológico
 }
 
+// Vista del estudiante: sin motivo, descripciones ni nombre del orientador
+export interface NovedadEstudiante {
+  fecha: string;
+  estado: EstadoDerivacion;
+  estadoEtiqueta: string;
+}
+
+export interface DerivacionEstudiante {
+  id: number;
+  destinoNombre: string;
+  fecha: string;
+  estado: EstadoDerivacion;
+  estadoEtiqueta: string;
+  diasTranscurridos: number;
+  novedades: NovedadEstudiante[]; // en orden cronológico
+}
+
 // skipErrorToast: la pantalla muestra ella misma el 403 (estudiante de otro psicoorientador o sin asignar)
 const quiet = { skipErrorToast: true };
 
@@ -76,6 +93,9 @@ export const derivacionService = {
 
   listarPorEstudiante: (estudianteId: number) =>
     api.get<DerivacionHistorial[]>(`/api/derivaciones/estudiante/${estudianteId}`, quiet).then((r) => r.data),
+
+  listarMisDerivaciones: () =>
+    api.get<DerivacionEstudiante[]>("/api/estudiantes/me/derivaciones", quiet).then((r) => r.data),
 
   registrarNovedad: (derivacionId: number, data: NovedadDerivacionPayload) =>
     api.post<NovedadDerivacion>(`/api/derivaciones/${derivacionId}/novedades`, data).then((r) => r.data),
