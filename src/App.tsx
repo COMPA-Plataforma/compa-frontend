@@ -28,6 +28,7 @@ import { authService } from "@/services/authService";
 import EstudianteProgressReportPage from "@/pages/estudiante/EstudianteProgressReportPage";
 import ProgressReportPage from "@/pages/ProgressReportPage";
 import AlertsPage from "@/pages/AlertsPage";
+import DerivacionesPage from "@/pages/DerivacionesPage";
 import DashboardPage from "@/pages/DashboardPage";
 import CompleteTaskPage from "@/pages/CompleteTaskPage";
 import PoliticaDatosPage from "@/pages/PoliticaDatosPage";
@@ -142,6 +143,7 @@ const App = () => (
                     <Route path="/estudiantes/:id/adherence" element={<AdherencePage />} />
                     <Route path="/estudiantes/:id/progress-report" element={<ProgressReportPage />} />
                     <Route path="/alerts" element={<AlertsPage />} />
+                    <Route path="/derivaciones" element={<DerivacionesPage />} />
           <Route path="/notifications/complete-task" element={<CompleteTaskPage />} />
           
                   </Routes>

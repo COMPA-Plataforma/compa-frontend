@@ -20,6 +20,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { RiskLevelSection } from "@/components/risk-level/RiskLevelSection";
 import { AtencionSection } from "@/components/atencion/AtencionSection";
 import { SeguimientoSection } from "@/components/seguimientos/SeguimientoSection";
+import { DerivacionesSection } from "@/components/derivaciones/DerivacionesSection";
 import { ValidacionActividadesSection } from "@/components/validacion/ValidacionActividadesSection";
 import { ExperienciasEstudianteSection } from "@/components/experiencias/ExperienciasEstudianteSection";
 import { AcudienteSection } from "@/components/acudiente/AcudienteSection";
@@ -305,6 +306,7 @@ export default function EstudianteDetailPage() {
             <TabsList className={subList}>
             <TabsTrigger value="seguimientos" className={subTrigger}>Seguimientos</TabsTrigger>
             <TabsTrigger value="validacion" className={subTrigger}>Validación</TabsTrigger>
+            <TabsTrigger value="derivaciones" className={subTrigger}>Derivaciones</TabsTrigger>
             </TabsList>
 
             {/* ── Seguimientos de sesión ── */}
@@ -315,6 +317,11 @@ export default function EstudianteDetailPage() {
             {/* ── Validar en consulta lo que el estudiante informó ── */}
             <TabsContent value="validacion" className="space-y-4 mt-4">
               <ValidacionActividadesSection estudianteId={estudianteId} />
+            </TabsContent>
+
+            {/* ── Derivaciones institucionales y sus novedades ── */}
+            <TabsContent value="derivaciones" className="space-y-4 mt-4">
+              <DerivacionesSection estudianteId={estudianteId} />
             </TabsContent>
           </Tabs>
         </TabsContent>

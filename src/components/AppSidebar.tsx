@@ -1,4 +1,4 @@
-import { Users, UserX, ShieldAlert, Activity, LogOut, Bell, LayoutDashboard, Moon, Sun, ShieldCheck } from "lucide-react";
+import { Users, UserX, ShieldAlert, Activity, LogOut, Bell, LayoutDashboard, Moon, Sun, ShieldCheck, Route } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -25,6 +25,7 @@ const navItems = [
   { title: "Estudiantes Inactivos", url: "/estudiantes/inactive", icon: UserX },
   { title: "Panel de Riesgo", url: "/risk-level", icon: ShieldAlert },
   { title: "Alertas", url: "/alerts", icon: Bell },
+  { title: "Derivaciones", url: "/derivaciones", icon: Route },
 ];
 
 export function AppSidebar() {

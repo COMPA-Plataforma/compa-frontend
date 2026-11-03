@@ -48,6 +48,7 @@ export function DerivacionDialog({ open, onOpenChange, alertId, estudianteName }
       toast.success(`Derivación registrada: ${d.destinoNombre}`);
       queryClient.invalidateQueries({ queryKey: ["alerts"] });
       queryClient.invalidateQueries({ queryKey: ["alerts-count"] });
+      queryClient.invalidateQueries({ queryKey: ["derivaciones", d.estudianteId] });
       onOpenChange(false);
     },
   });
