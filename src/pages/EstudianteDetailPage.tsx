@@ -24,6 +24,7 @@ import { DerivacionesSection } from "@/components/derivaciones/DerivacionesSecti
 import { ValidacionActividadesSection } from "@/components/validacion/ValidacionActividadesSection";
 import { ExperienciasEstudianteSection } from "@/components/experiencias/ExperienciasEstudianteSection";
 import { AcudienteSection } from "@/components/acudiente/AcudienteSection";
+import { RevisionAutorizacionCard } from "@/components/consentimientos/RevisionAutorizacionCard";
 import { atencionService } from "@/services/atencionService";
 import { formatFecha } from "@/lib/dates";
 import { frecuenciaTexto } from "@/lib/habitos";
@@ -196,8 +197,10 @@ export default function EstudianteDetailPage() {
 
       {/* Los estudiantes con tarjeta de identidad son menores: se muestra su acudiente y la autorización */}
       {estudiante.documentType === "TARJETA_DE_IDENTIDAD" && (
-        <AcudienteSection estudianteId={estudianteId}
-        />
+        <>
+          <RevisionAutorizacionCard estudianteId={estudianteId} />
+          <AcudienteSection estudianteId={estudianteId} />
+        </>
       )}
 
       <RiskLevelSection estudianteId={estudianteId} />

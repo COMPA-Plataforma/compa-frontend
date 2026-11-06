@@ -14,7 +14,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { guardianService } from "@/services/guardianService";
 import type { Guardian } from "@/types";
 
@@ -32,17 +31,12 @@ const vacio = {
   relationship: "",
   email: "",
   phoneNumber: "",
-  fechaAutorizacion: "",
 };
-
-// Fecha de hoy en Colombia (yyyy-MM-dd), para no permitir autorizaciones futuras
-const hoyColombia = () => new Date().toLocaleDateString("en-CA", { timeZone: "America/Bogota" });
 
 // Registra o corrige el acudiente (representante legal) de un estudiante menor de edad
 export function AcudienteDialog({ open, onOpenChange, estudianteId, existing }: Props) {
   const queryClient = useQueryClient();
   const [form, setForm] = useState(vacio);
-  const [confirma, setConfirma] = useState(false);
 
   // Al abrir, carga los datos que ya existen (si los hay)
   useEffect(() => {
@@ -56,11 +50,9 @@ export function AcudienteDialog({ open, onOpenChange, estudianteId, existing }: 
             relationship: existing.relationship,
             email: existing.email ?? "",
             phoneNumber: existing.phoneNumber ?? "",
-            fechaAutorizacion: existing.fechaAutorizacion ?? "",
           }
         : vacio,
     );
-    setConfirma(false);
   }, [open, existing]);
 
   const mutation = useMutation({
@@ -73,7 +65,6 @@ export function AcudienteDialog({ open, onOpenChange, estudianteId, existing }: 
         relationship: form.relationship.trim(),
         email: form.email.trim() || undefined,
         phoneNumber: form.phoneNumber.trim() || undefined,
-        fechaAutorizacion: form.fechaAutorizacion,
       }),
     onSuccess: () => {
       toast.success("Acudiente guardado.");
@@ -91,18 +82,9 @@ export function AcudienteDialog({ open, onOpenChange, estudianteId, existing }: 
       !form.name.trim() ||
       !form.lastName.trim() ||
       !form.identityDocument.trim() ||
-      !form.relationship.trim() ||
-      !form.fechaAutorizacion
+      !form.relationship.trim()
     ) {
-      toast.error("Completa los datos del acudiente y la fecha de su autorización.");
-      return;
-    }
-    if (form.fechaAutorizacion > hoyColombia()) {
-      toast.error("La fecha de autorización no puede ser futura.");
-      return;
-    }
-    if (!confirma) {
-      toast.error("Confirma que recibiste la autorización del representante legal.");
+      toast.error("Completa los datos del acudiente.");
       return;
     }
     mutation.mutate();
@@ -114,7 +96,7 @@ export function AcudienteDialog({ open, onOpenChange, estudianteId, existing }: 
         <DialogHeader>
           <DialogTitle>{existing ? "Editar acudiente" : "Registrar acudiente"}</DialogTitle>
           <DialogDescription>
-            Representante legal del estudiante menor de edad y fecha en que autorizó el acompañamiento.
+            Representante legal del estudiante menor de edad. Sus datos se usan para llenar el documento de autorización.
           </DialogDescription>
         </DialogHeader>
 
@@ -155,24 +137,6 @@ export function AcudienteDialog({ open, onOpenChange, estudianteId, existing }: 
               <Label htmlFor="ac-email">Email</Label>
               <Input id="ac-email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="ac-fecha">Fecha en que el acudiente autorizó *</Label>
-            <Input
-              id="ac-fecha"
-              type="date"
-              max={hoyColombia()}
-              value={form.fechaAutorizacion}
-              onChange={(e) => setForm({ ...form, fechaAutorizacion: e.target.value })}
-            />
-          </div>
-
-          <div className="flex items-start gap-2">
-            <Checkbox id="ac-confirma" checked={confirma} onCheckedChange={(v) => setConfirma(v === true)} className="mt-0.5" />
-            <Label htmlFor="ac-confirma" className="text-sm font-normal leading-snug">
-              Confirmo que recibí la autorización del representante legal para el acompañamiento de este estudiante.
-            </Label>
           </div>
 
           <DialogFooter className="pt-2">

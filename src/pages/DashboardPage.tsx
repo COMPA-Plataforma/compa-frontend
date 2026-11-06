@@ -16,6 +16,7 @@ import { estudianteService } from "@/services/estudianteService";
 import { authService } from "@/services/authService";
 import type { RiskLevel, RiskLevelInfo } from "@/types";
 import { cn } from "@/lib/utils";
+import { AutorizacionesPendientesCard } from "@/components/consentimientos/AutorizacionesPendientesCard";
 
 const formatPct = (value: number) => `${Math.round(value)}%`;
 const formatDate = (value: string) => format(new Date(value), "dd/MM/yyyy");
@@ -101,6 +102,10 @@ export default function DashboardPage() {
           Aquí está el resumen de tus estudiantes hoy — {format(new Date(), "dd/MM/yyyy")}
         </p>
       </div>
+
+      {/* Documentos de menores que esperan revisión */}
+      <AutorizacionesPendientesCard />
+
 
       {/* Tarjetas estadísticas */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">

@@ -41,6 +41,12 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // Menor de edad sin autorización aprobada: la pantalla de bloqueo lo explica, no se muestra toast
+    if (status === 403 && error.response?.data?.code === "AUTORIZACION_MENOR_PENDIENTE") {
+      window.dispatchEvent(new Event("compa:autorizacion-menor-pendiente"));
+      return Promise.reject(error);
+    }
+
     if (!error.config?.skipErrorToast) {
       toast.error(backendMessage || error.message || "Error inesperado");
     }
