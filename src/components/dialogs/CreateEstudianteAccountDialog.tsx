@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
@@ -48,18 +47,12 @@ const initialAcudiente = {
   relationship: "",
   email: "",
   phoneNumber: "",
-  fechaAutorizacion: "",
 };
-
-// Fecha de hoy en Colombia (yyyy-MM-dd), para no permitir autorizaciones futuras
-const hoyColombia = () =>
-  new Date().toLocaleDateString("en-CA", { timeZone: "America/Bogota" });
 
 export function CreateEstudianteAccountDialog({ open, onOpenChange, orientadorId }: Props) {
   const queryClient = useQueryClient();
   const [form, setForm] = useState(initialForm);
   const [acudiente, setAcudiente] = useState(initialAcudiente);
-  const [confirmaAutorizacion, setConfirmaAutorizacion] = useState(false);
 
   // Tarjeta de identidad = menor de edad
   const esMenor = form.documentType === "TARJETA_DE_IDENTIDAD";
@@ -67,7 +60,6 @@ export function CreateEstudianteAccountDialog({ open, onOpenChange, orientadorId
   const resetAll = () => {
     setForm(initialForm);
     setAcudiente(initialAcudiente);
-    setConfirmaAutorizacion(false);
   };
 
   const buildPayload = (): CreateEstudianteAccountPayload => {
@@ -83,7 +75,6 @@ export function CreateEstudianteAccountDialog({ open, onOpenChange, orientadorId
         relationship: acudiente.relationship.trim(),
         email: acudiente.email.trim() || undefined,
         phoneNumber: acudiente.phoneNumber.trim() || undefined,
-        fechaAutorizacion: acudiente.fechaAutorizacion,
       },
     };
   };
@@ -123,18 +114,9 @@ export function CreateEstudianteAccountDialog({ open, onOpenChange, orientadorId
         !acudiente.name.trim() ||
         !acudiente.lastName.trim() ||
         !acudiente.identityDocument.trim() ||
-        !acudiente.relationship.trim() ||
-        !acudiente.fechaAutorizacion
+        !acudiente.relationship.trim()
       ) {
-        toast.error("Completa los datos del acudiente y la fecha de su autorización.");
-        return;
-      }
-      if (acudiente.fechaAutorizacion > hoyColombia()) {
-        toast.error("La fecha de autorización no puede ser futura.");
-        return;
-      }
-      if (!confirmaAutorizacion) {
-        toast.error("Confirma que recibiste la autorización del representante legal.");
+        toast.error("Completa los datos del acudiente.");
         return;
       }
     }
@@ -227,9 +209,9 @@ export function CreateEstudianteAccountDialog({ open, onOpenChange, orientadorId
               <Alert>
                 <ShieldAlert className="h-4 w-4" />
                 <AlertDescription>
-                  Los estudiantes con tarjeta de identidad son menores de edad. Para acompañarlos
-                  necesitamos los datos de su acudiente (representante legal) y la fecha en que
-                  autorizó el acompañamiento.
+                  Los estudiantes con tarjeta de identidad son menores de edad. Registra los datos de su acudiente:
+                  al ingresar por primera vez, el estudiante recibirá el documento de autorización con esos datos para
+                  que su representante legal lo firme y lo suba. No podrá usar COMPA hasta que tú lo apruebes.
                 </AlertDescription>
               </Alert>
 
@@ -292,30 +274,6 @@ export function CreateEstudianteAccountDialog({ open, onOpenChange, orientadorId
                     onChange={(e) => setAcudiente({ ...acudiente, email: e.target.value })}
                   />
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="acudiente-fecha">Fecha en que el acudiente autorizó *</Label>
-                <Input
-                  id="acudiente-fecha"
-                  type="date"
-                  max={hoyColombia()}
-                  value={acudiente.fechaAutorizacion}
-                  onChange={(e) => setAcudiente({ ...acudiente, fechaAutorizacion: e.target.value })}
-                />
-              </div>
-
-              <div className="flex items-start gap-2">
-                <Checkbox
-                  id="acudiente-confirma"
-                  checked={confirmaAutorizacion}
-                  onCheckedChange={(v) => setConfirmaAutorizacion(v === true)}
-                  className="mt-0.5"
-                />
-                <Label htmlFor="acudiente-confirma" className="text-sm font-normal leading-snug">
-                  Confirmo que recibí la autorización del representante legal para el acompañamiento
-                  de este estudiante.
-                </Label>
               </div>
             </div>
           )}

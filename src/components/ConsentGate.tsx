@@ -9,6 +9,7 @@ import { Loader2, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { authService } from "@/services/authService";
 import { estudianteMeService } from "@/services/estudianteMeService";
+import { autorizacionMenorService } from "@/services/autorizacionMenorService";
 import type { EstudianteConsent } from "@/services/consentService";
 import { consentTipoLabel, formatConsentVersion } from "@/lib/consents";
 
@@ -75,9 +76,25 @@ function PendingConsentCard({ consent }: { consent: EstudianteConsent }) {
 export default function ConsentGate({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
+  // Un menor sin la autorización de su representante legal aprobada no puede ni consultar consentimientos:
+  // se le deja pasar para que el layout le muestre la pantalla de autorización
+  const meQuery = useQuery({
+    queryKey: ["estudiante-me-layout"],
+    queryFn: estudianteMeService.getMe,
+  });
+  const esMenor = meQuery.data?.documentType === "TARJETA_DE_IDENTIDAD";
+  const autQuery = useQuery({
+    queryKey: ["autorizacion-menor-me"],
+    queryFn: autorizacionMenorService.getMia,
+    enabled: esMenor,
+  });
+  const cargandoMenor = meQuery.isLoading || (esMenor && autQuery.isLoading);
+  const menorBloqueado = esMenor && autQuery.data?.estado !== "APROBADA";
+
   const pendingQuery = useQuery({
     queryKey: ["me-consents-pending"],
     queryFn: estudianteMeService.hasPendingConsents,
+    enabled: !cargandoMenor && !menorBloqueado,
   });
 
   const hasPending = pendingQuery.data === true;
@@ -95,6 +112,10 @@ export default function ConsentGate({ children }: { children: React.ReactNode })
     );
     navigate("/login", { replace: true });
   };
+
+  if (cargandoMenor) return <FullScreenSpinner />;
+
+  if (menorBloqueado) return <>{children}</>;
 
   if (pendingQuery.isLoading) return <FullScreenSpinner />;
 

@@ -7,8 +7,8 @@ import { guardianService } from "@/services/guardianService";
 import { AcudienteDialog } from "@/components/acudiente/AcudienteDialog";
 import { formatFecha } from "@/lib/dates";
 
-// Acudiente (representante legal) de un estudiante menor de edad y la fecha en que autorizó.
-// Solo se muestra si el estudiante tiene tarjeta de identidad.
+// Acudiente (representante legal) de un estudiante menor de edad. La fecha de autorización es el día
+// en que el psicoorientador aprobó el documento firmado. Solo se muestra si el estudiante tiene tarjeta de identidad.
 export function AcudienteSection({ estudianteId }: { estudianteId: number }) {
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -28,8 +28,7 @@ export function AcudienteSection({ estudianteId }: { estudianteId: number }) {
   }
 
   const sinAcudiente = !acudiente;
-  const sinFecha = !!acudiente && !acudiente.fechaAutorizacion;
-  const hayProblema = sinAcudiente || sinFecha;
+  const hayProblema = sinAcudiente;
 
   return (
     <Card className={hayProblema ? "border-amber-400" : undefined}>
@@ -43,16 +42,18 @@ export function AcudienteSection({ estudianteId }: { estudianteId: number }) {
             )}
             Acudiente (menor de edad)
           </CardTitle>
-          <Button variant="outline" size="sm" onClick={() => setDialogOpen(true)}>
-            {sinAcudiente ? "Registrar acudiente" : "Editar"}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setDialogOpen(true)}>
+              {sinAcudiente ? "Registrar acudiente" : "Editar"}
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-2 text-sm">
         {sinAcudiente ? (
           <p className="text-amber-700">
-            Este estudiante es menor de edad y todavía no tiene acudiente registrado. Registra sus datos y la fecha
-            en que autorizó el acompañamiento.
+            Este estudiante es menor de edad y todavía no tiene acudiente registrado. Registra sus datos: el estudiante
+            los verá en el documento de autorización que debe subir firmado.
           </p>
         ) : (
           <>
@@ -63,11 +64,9 @@ export function AcudienteSection({ estudianteId }: { estudianteId: number }) {
               <p><span className="text-muted-foreground">Teléfono: </span>{acudiente.phoneNumber || "—"}</p>
               <p><span className="text-muted-foreground">Email: </span>{acudiente.email || "—"}</p>
             </div>
-            {sinFecha ? (
-              <p className="text-amber-700">Falta registrar la fecha en que el acudiente autorizó el acompañamiento.</p>
-            ) : (
+            {acudiente.fechaAutorizacion && (
               <p className="font-medium text-green-700">
-                Autorización del representante legal registrada el {formatFecha(acudiente.fechaAutorizacion)}.
+                Autorización del representante legal aprobada el {formatFecha(acudiente.fechaAutorizacion)}.
               </p>
             )}
           </>
