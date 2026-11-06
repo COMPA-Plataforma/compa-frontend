@@ -10,6 +10,7 @@ import { frecuenciaTexto } from "@/lib/habitos";
 import { ExperienciaDialog } from "@/components/experiencias/ExperienciaDialog";
 import { ExperienciasSection } from "@/components/experiencias/ExperienciasSection";
 import type { Experiencia } from "@/types";
+import { EstrategiasVigentesCard } from "@/components/estrategias/EstrategiasVigentesCard";
 
 export default function EstudiantePlanPage() {
   const currentUser = authService.getCurrentUser();
@@ -235,6 +236,10 @@ export default function EstudiantePlanPage() {
             </Card>
           )}
         </div>
+        {/* Estrategias vigentes */}
+        <EstrategiasVigentesCard />
+
+       
 
         {/* Experiencias que el estudiante cuenta sobre sus actividades */}
         <ExperienciasSection

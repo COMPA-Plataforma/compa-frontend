@@ -31,6 +31,7 @@ import { frecuenciaTexto } from "@/lib/habitos";
 import axios from "axios";
 import { consentService } from "@/services/consentService";
 import { checkInService } from "@/services/checkInService";
+import { EstrategiasSection } from "@/components/estrategias/EstrategiasSection";
 
 // Secciones dentro de cada pestaña principal: botones tipo "pill"
 const subList = "h-auto bg-transparent p-0 gap-2 justify-start flex-wrap";
@@ -336,6 +337,7 @@ export default function EstudianteDetailPage() {
             <TabsTrigger value="habits" className={subTrigger}>Planes de Hábitos</TabsTrigger>
             <TabsTrigger value="today-tasks" className={subTrigger}>Tareas de Hoy</TabsTrigger>
             <TabsTrigger value="experiencias" className={subTrigger}>Experiencias</TabsTrigger>
+            <TabsTrigger value="estrategias" className={subTrigger}>Estrategias</TabsTrigger>
             </TabsList>
 
             {/* ── Planes de Hábitos ── */}
@@ -520,8 +522,18 @@ export default function EstudianteDetailPage() {
             <TabsContent value="experiencias" className="space-y-4 mt-4">
               <ExperienciasEstudianteSection estudianteId={estudianteId} />
             </TabsContent>
+
+            {/* ── Estrategias de acompañamiento ── */}
+            <TabsContent value="estrategias" className="space-y-4 mt-4">
+              <EstrategiasSection estudianteId={estudianteId} />
+            </TabsContent>
+
           </Tabs>
         </TabsContent>
+
+        
+        
+
 
         {/* ── Consentimientos ── */}
         <TabsContent value="consents" className="space-y-4 mt-4">
