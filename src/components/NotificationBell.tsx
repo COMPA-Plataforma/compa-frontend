@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { RecordatoriosDialog } from "@/components/recordatorios/RecordatoriosDialog";
 import { notificationService, type AppNotification } from "@/services/notificationService";
 
 function timeAgo(iso: string) {
@@ -28,10 +29,10 @@ function NotificationItem({ notification }: { notification: AppNotification }) {
       queryClient.invalidateQueries({ queryKey: ["notifications-unread-count"] });
       queryClient.invalidateQueries({ queryKey: ["today-tasks"] });
       queryClient.invalidateQueries({ queryKey: ["today-check-in"] });
-      toast.success("¡Actividad registrada como cumplida!");
+      toast.success("¡Tarea registrada como cumplida!");
     },
     onError: () => {
-      toast.error("No pudimos registrar la actividad. Intenta de nuevo.");
+      toast.error("No pudimos registrar la tarea. Intenta de nuevo.");
     },
   });
 
@@ -53,7 +54,7 @@ function NotificationItem({ notification }: { notification: AppNotification }) {
           {alreadyDone ? (
             <div className="flex items-center gap-1.5 text-sm font-medium text-green-600 dark:text-green-500">
               <CheckCircle2 className="h-4 w-4" />
-              Actividad registrada como cumplida
+              Tarea registrada como cumplida
             </div>
           ) : (
             <Button
@@ -79,6 +80,7 @@ function NotificationItem({ notification }: { notification: AppNotification }) {
 
 export function NotificationBell() {
   const [open, setOpen] = useState(false);
+  const [recOpen, setRecOpen] = useState(false);
 
   const { data: unreadCount } = useQuery({
     queryKey: ["notifications-unread-count"],
@@ -93,6 +95,7 @@ export function NotificationBell() {
   });
 
   return (
+    <>
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
@@ -126,7 +129,23 @@ export function NotificationBell() {
             <NotificationItem key={n.id} notification={n} />
           ))}
         </ScrollArea>
+        {/* acceso a la config de recordatorios */}
+        <div className="border-t px-2 py-1.5">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start gap-2 text-muted-foreground"
+            onClick={() => {
+              setOpen(false);
+              setRecOpen(true);
+            }}
+          >
+            <span aria-hidden>⏰</span> Configurar recordatorios
+          </Button>
+        </div>
       </PopoverContent>
     </Popover>
+    <RecordatoriosDialog abierto={recOpen} setAbierto={setRecOpen} />
+    </>
   );
 }
